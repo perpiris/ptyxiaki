@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity()
 public class HttpSecurityConfig {
 
     @Bean

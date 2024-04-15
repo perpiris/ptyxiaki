@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthenticationRequest {
+public class LoginDto {
 
     @NotEmpty(message = "This field is required.")
     @Size(max = 255)

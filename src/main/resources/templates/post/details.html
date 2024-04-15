@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <title th:text="${post.title}"></title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1" th:text="${post.title}"></h1>
+        <p th:text="${post.createdOn}"></p>
+        <span class="badge badge-primary" th:text="${post.jobType.getDisplayName}"></span>
+        <span class="badge badge-primary" th:text="${post.jobLocation.getDisplayName}"></span>
+
+        <div class="d-flex align-items-center">
+            <a th:href="@{/posts/list}" class="btn btn-secondary me-2">Back to list</a>
+
+        </div>
+    </div>
+
+    <div style="w-80">
+        <p><span th:text="${post.description}"></span></p>
+    </div>
+
+</div>
+</body>
+</html>

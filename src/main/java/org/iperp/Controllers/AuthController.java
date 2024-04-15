@@ -1,8 +1,9 @@
 package org.iperp.Controllers;
 
 import jakarta.validation.Valid;
-import org.iperp.Dtos.AuthenticationRequest;
+import org.iperp.Dtos.LoginDto;
 import org.iperp.Dtos.RegistrationRequest;
+import org.iperp.Enums.UserRole;
 import org.iperp.Services.IRegistrationService;
 import org.iperp.Utilities.WebUtils;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,11 @@ public class AuthController {
         this.registrationService = registrationService;
     }
 
+    @ModelAttribute
+    public void prepareContext(final Model model) {
+        model.addAttribute("roleValues", UserRole.values());
+    }
+
     @GetMapping("/login")
     public String login(
             @RequestParam(name = "loginRequired", required = false) final Boolean loginRequired,
@@ -30,7 +36,7 @@ public class AuthController {
             @RequestParam(name = "logoutSuccess", required = false) final Boolean logoutSuccess,
             final Model model) {
 
-        model.addAttribute("authentication", new AuthenticationRequest());
+        model.addAttribute("authentication", new LoginDto());
         if (loginRequired == Boolean.TRUE) {
             model.addAttribute(WebUtils.MSG_INFO, "Please login to view this page.");
         }

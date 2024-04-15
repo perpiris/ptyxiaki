@@ -1,12 +1,94 @@
 <!DOCTYPE HTML>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
     <title>Job List</title>
 </head>
 <body>
 <div layout:fragment="content">
-    <h1 class="mb-4">List Page</h1>
+
+    <div class="row">
+        <div class="col-3">
+
+            <form id="filterForm" th:action="@{/posts/list}" method="get">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Job Type</h5>
+                        <div class="form-check">
+                            <input class="form-check-input jobTypeFilter" type="radio" name="jobType" id="jobTypeAll"
+                                   value="" th:checked="${selectedJobType == null}"/>
+                            <label class="form-check-label" for="jobTypeAll">All</label>
+                        </div>
+                        <div class="form-check" th:each="jobType : ${jobTypeValues}">
+                            <input class="form-check-input jobTypeFilter" type="radio" name="jobType"
+                                   th:id="'jobType_' + ${jobType}" th:value="${jobType}"
+                                   th:checked="${jobType == selectedJobType}"/>
+                            <label class="form-check-label" th:for="'jobType_' + ${jobType}"
+                                   th:text="${jobType.displayName}"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Work Location</h5>
+                        <div class="form-check">
+                            <input class="form-check-input jobLocationFilter" type="radio" name="jobLocation"
+                                   id="jobLocationAll" value="" th:checked="${selectedWorkLocation == null}"/>
+                            <label class="form-check-label" for="jobLocationAll">All</label>
+                        </div>
+                        <div class="form-check" th:each="jobLocation : ${jobLocationValues}">
+                            <input class="form-check-input jobLocationFilter" type="radio" name="jobLocation"
+                                   th:id="'jobLocation_' + ${jobLocation}" th:value="${jobLocation}"
+                                   th:checked="${jobLocation == selectedWorkLocation}"/>
+                            <label class="form-check-label" th:for="'jobLocation_' + ${jobLocation}"
+                                   th:text="${jobLocation.displayName}"></label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="col-9">
+            <div th:if="${posts.empty}"><h1 class="text-center">No results found.</h1></div>
+            <div th:if="${!posts.empty}" class="list-group list-group-flush scrollarea">
+                <a th:each="post : ${posts}" th:href="@{/posts/details/{postId}(postId=${post.id})}"
+                   class="list-group-item list-group-item-action py-3 lh-sm mb-3">
+                    <div class="d-flex w-100 align-items-start justify-content-between">
+                        <div class="col-10">
+                            <div class="d-flex w-100 align-items-center justify-content-between">
+                                <h2 th:text="${post.title}"></h2>
+                            </div>
+                            <div class="col-10 mt-1">
+                                <span class="badge bg-primary" th:text="${post.jobType.getDisplayName}"></span>
+                                <span class="badge bg-primary" th:text="${post.jobLocation.getDisplayName}"></span>
+                            </div>
+                            <div class="col-10 mt-4">
+                                <!-- add skills here -->
+                            </div>
+                        </div>
+                        <div class="col-2 text-end">
+                            <small>Created </small><br>
+                            <span th:text="${post.createdOn}"></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <nav th:if="${!posts.empty}">
+                <ul class="pagination justify-content-center mt-3">
+                    <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/posts/list(page=${pageNumber})}" class="page-link"
+                           th:text="${pageNumber + 1}"></a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

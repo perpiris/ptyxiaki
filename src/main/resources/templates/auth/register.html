@@ -12,6 +12,7 @@
         <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='username', required=true, label='Username')}" />
         <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='password', required=true, type='password', label='Password')}" />
         <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='email', required=true, label='Email')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='role', required=true, type='radio')}" />
         <input type="submit" th:value="Register" class="btn btn-primary mt-4" />
     </form>
 </div>

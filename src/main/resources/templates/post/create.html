@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>New</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1">Create new post</h1>
+        <div>
+            <a th:href="@{/posts/manage}" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/forms::globalErrors('post')}"/>
+    <form th:action="${requestUri}" method="post" autocomplete="off">
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='title', required=true, label='Title')}"/>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='description', required=true, type='textarea', label='Description')}"/>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobType', required=true, type='radio', label='Job Type')}"/>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobLocation', required=true, type='radio', label='Work Location')}"/>
+
+        <div class="d-flex justify-content-end">
+            <input type="submit" th:value="Create" class="btn btn-primary mt-4"/>
+        </div>
+    </form>
+</div>
+</body>
+</html>

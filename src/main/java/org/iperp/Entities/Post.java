@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.iperp.Enums.JobType;
-import org.iperp.Enums.WorkLocation;
+import org.iperp.Enums.JobLocation;
 
 @Data
 @NoArgsConstructor
@@ -32,7 +32,7 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "work_location", nullable = false)
-    private WorkLocation workLocation;
+    private JobLocation jobLocation;
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
