@@ -7,6 +7,7 @@ import org.iperp.Enums.JobType;
 import org.iperp.Services.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/posts")
+@PreAuthorize("hasAuthority('USER')")
 public class PostController {
 
     @Autowired
@@ -63,18 +65,20 @@ public class PostController {
     }
 
     @GetMapping("/details/{id}")
-    public String details(@PathVariable("id") long id, Model model) {
+    public String details(@PathVariable("id") long postId, Model model) {
 
-        model.addAttribute("post", postService.get(id));
+        model.addAttribute("post", postService.get(postId));
         return "post/details";
     }
 
+    @PreAuthorize("hasAuthority('RECRUITER')")
     @GetMapping("/create")
     public String create(@ModelAttribute("post") PostDto postDto) {
 
         return "post/create";
     }
 
+    @PreAuthorize("hasAuthority('RECRUITER')")
     @PostMapping("/create")
     public String create(@ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -82,41 +86,45 @@ public class PostController {
             return "post/create";
         }
 
-        postService.create(postDto);
+        var newPostId = postService.create(postDto);
         redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post created successfully.");
 
-        return "redirect:/posts/list";
+        return "redirect:/posts/details/" + newPostId;
     }
 
-    @GetMapping("/update/{id}")
-    public String update(@PathVariable(name = "id") Long id, Model model) {
+    @PreAuthorize("hasAuthority('RECRUITER')")
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable(name = "id") Long postId, Model model) {
 
-        model.addAttribute("post", postService.get(id));
-        return "post/update";
+        model.addAttribute("post", postService.get(postId));
+        return "post/edit";
     }
 
-    @PostMapping("/update/{id}")
-    public String update(@PathVariable(name = "id") Long id, @ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    @PreAuthorize("hasAuthority('RECRUITER')")
+    @PostMapping("/edit/{id}")
+    public String edit(@PathVariable(name = "id") Long postId, @ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            return "post/update";
+            return "post/edit";
         }
 
-        postService.update(id, postDto);
+        postService.edit(postId, postDto);
         redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post updated successfully.");
 
         return "redirect:/posts/manage";
     }
 
+    @PreAuthorize("hasAuthority('RECRUITER')")
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable(name = "id") Long id, RedirectAttributes redirectAttributes) {
+    public String delete(@PathVariable(name = "id") Long postId, RedirectAttributes redirectAttributes) {
 
-        postService.delete(id);
+        postService.delete(postId);
         redirectAttributes.addFlashAttribute("MSG_INFO", "Post deleted successfully.");
 
-        return "redirect:/manage";
+        return "redirect:/posts/manage";
     }
 
+    @PreAuthorize("hasAuthority('RECRUITER')")
     @GetMapping("/manage")
     public String manage(@RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size,

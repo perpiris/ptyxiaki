@@ -1,8 +1,8 @@
 package org.iperp.Services;
 
-import org.iperp.Dtos.RegistrationRequest;
+import org.iperp.Dtos.RegisterDto;
 
 public interface IRegistrationService {
 
-    void register(final RegistrationRequest registrationRequest);
+    void register(final RegisterDto registerDto);
 }

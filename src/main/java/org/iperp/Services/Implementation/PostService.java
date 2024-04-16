@@ -16,6 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
+
 @Service
 public class PostService implements IPostService {
 
@@ -71,48 +75,74 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public PostDto get(final Long id) {
-        return postRepository.findById(id)
+    public PostDto get(final Long postId) {
+        return postRepository.findById(postId)
                 .map(post -> mapToDto(post, new PostDto()))
                 .orElseThrow(NotFoundException::new);
     }
 
     @Override
-    public void create(final PostDto postDto) {
+    public Long create(final PostDto postDto) {
         final Post post = new Post();
         mapToEntity(postDto, post);
 
         String username = SecurityUtility.getSessionUser();
         AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
         post.setCreatedBy(user);
+
+        return postRepository.save(post).getId();
     }
 
     @Override
-    public void update(final Long id, final PostDto postDto) {
-        final Post post = postRepository.findById(id)
+    public void edit(final Long postId, final PostDto postDto) {
+        final Post post = postRepository.findById(postId)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(postDto, post);
         postRepository.save(post);
     }
 
     @Override
-    public void delete(final Long id) {
-        postRepository.deleteById(id);
+    public void delete(final Long postId) {
+        postRepository.deleteById(postId);
     }
 
-    private PostDto mapToDto(final Post post, final PostDto postDTO) {
-        postDTO.setId(post.getId());
-        postDTO.setTitle(post.getTitle());
-        postDTO.setDescription(post.getDescription());
-        postDTO.setJobType(post.getJobType());
-        postDTO.setJobLocation(post.getJobLocation());
-        return postDTO;
+    private boolean isOwner(Long postId) {
+        String username = SecurityUtility.getSessionUser();
+        Optional<Post> postOptional = postRepository.findByIdAndCreatedByUsername(postId, username);
+        return postOptional.isPresent();
     }
 
-    private void mapToEntity(final PostDto postDTO, final Post post) {
-        post.setTitle(postDTO.getTitle());
-        post.setDescription(postDTO.getDescription());
-        post.setJobType(postDTO.getJobType());
-        post.setJobLocation(postDTO.getJobLocation());
+    private PostDto mapToDto(final Post post, final PostDto postDto) {
+        postDto.setId(post.getId());
+        postDto.setTitle(post.getTitle());
+        postDto.setDescription(post.getDescription());
+        postDto.setJobType(post.getJobType());
+        postDto.setJobLocation(post.getJobLocation());
+        postDto.setCreatedOn(calculateRelativeTime(post.getCreatedOn()));
+        return postDto;
+    }
+
+    private void mapToEntity(final PostDto postDto, final Post post) {
+        post.setTitle(postDto.getTitle());
+        post.setDescription(postDto.getDescription());
+        post.setJobType(postDto.getJobType());
+        post.setJobLocation(postDto.getJobLocation());
+    }
+
+    private String calculateRelativeTime(LocalDateTime createdDate) {
+        LocalDateTime now = LocalDateTime.now();
+        long seconds = now.atZone(ZoneId.systemDefault()).toEpochSecond() - createdDate.atZone(ZoneId.systemDefault()).toEpochSecond();
+        long days = seconds / (60 * 60 * 24);
+        long hours = seconds / (60 * 60);
+        long minutes = seconds / 60;
+        if (days > 0) {
+            return days + (days == 1 ? " day ago" : " days ago");
+        } else if (hours > 0) {
+            return hours + (hours == 1 ? " hour ago" : " hours ago");
+        } else if (minutes > 0) {
+            return minutes + (minutes == 1 ? " minute ago" : " minutes ago");
+        } else {
+            return seconds + (seconds == 1 ? " second ago" : " seconds ago");
+        }
     }
 }

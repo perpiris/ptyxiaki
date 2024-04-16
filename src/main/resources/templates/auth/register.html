@@ -7,12 +7,12 @@
 <body>
 <div layout:fragment="content">
     <h1 class="mb-4">Register</h1>
-    <div th:replace="~{fragments/forms::globalErrors('registrationRequest')}" />
+    <div th:replace="~{fragments/forms::globalErrors('registerDto')}" />
     <form th:action="${requestUri}" method="post">
-        <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='username', required=true, label='Username')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='password', required=true, type='password', label='Password')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='email', required=true, label='Email')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='registrationRequest', field='role', required=true, type='radio')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='username', required=true, label='Username')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='password', required=true, type='password', label='Password')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='email', required=true, label='Email')}" />
+        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='role', required=true, type='radio', label='I am a')}" />
         <input type="submit" th:value="Register" class="btn btn-primary mt-4" />
     </form>
 </div>

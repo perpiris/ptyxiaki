@@ -31,16 +31,16 @@
 
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">Work Location</h5>
+                        <h5 class="card-title">Job Location</h5>
                         <div class="form-check">
                             <input class="form-check-input jobLocationFilter" type="radio" name="jobLocation"
-                                   id="jobLocationAll" value="" th:checked="${selectedWorkLocation == null}"/>
+                                   id="jobLocationAll" value="" th:checked="${selectedJobLocation == null}"/>
                             <label class="form-check-label" for="jobLocationAll">All</label>
                         </div>
                         <div class="form-check" th:each="jobLocation : ${jobLocationValues}">
                             <input class="form-check-input jobLocationFilter" type="radio" name="jobLocation"
                                    th:id="'jobLocation_' + ${jobLocation}" th:value="${jobLocation}"
-                                   th:checked="${jobLocation == selectedWorkLocation}"/>
+                                   th:checked="${jobLocation == selectedJobLocation}"/>
                             <label class="form-check-label" th:for="'jobLocation_' + ${jobLocation}"
                                    th:text="${jobLocation.displayName}"></label>
                         </div>

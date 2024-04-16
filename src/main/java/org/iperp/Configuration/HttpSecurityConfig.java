@@ -42,7 +42,10 @@ public class HttpSecurityConfig {
                         .logoutSuccessUrl("/login?logoutSuccess=true")
                         .deleteCookies("JSESSIONID"))
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?loginRequired=true")))
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login?loginRequired=true"))
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.sendRedirect("/?invalidRole=true");
+                        }))
                 .build();
     }
 

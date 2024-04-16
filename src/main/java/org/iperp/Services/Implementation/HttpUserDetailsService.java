@@ -1,9 +1,10 @@
 package org.iperp.Services.Implementation;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
-import org.iperp.Dtos.HttpUserDetails;
+import org.iperp.Dtos.HttpUserDetailsDto;
 import org.iperp.Entities.AppUser;
 import org.iperp.Repositories.IAppUserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,14 +24,16 @@ public class HttpUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public HttpUserDetails loadUserByUsername(final String username) {
+    public HttpUserDetailsDto loadUserByUsername(final String username) {
         final AppUser appUser = appUserRepository.findByUsernameIgnoreCase(username);
         if (appUser == null) {
             log.warn("user not found: {}", username);
             throw new UsernameNotFoundException("User " + username + " not found");
         }
-        final List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("USER"));
-        return new HttpUserDetails(appUser.getId(), username, appUser.getHash(), authorities);
+        final List<SimpleGrantedAuthority> authorities = appUser.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                .collect(Collectors.toList());
+        return new HttpUserDetailsDto(appUser.getId(), username, appUser.getHash(), authorities);
     }
 
 }

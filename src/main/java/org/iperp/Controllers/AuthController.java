@@ -2,7 +2,7 @@ package org.iperp.Controllers;
 
 import jakarta.validation.Valid;
 import org.iperp.Dtos.LoginDto;
-import org.iperp.Dtos.RegistrationRequest;
+import org.iperp.Dtos.RegisterDto;
 import org.iperp.Enums.UserRole;
 import org.iperp.Services.IRegistrationService;
 import org.iperp.Utilities.WebUtils;
@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 public class AuthController {
 
@@ -26,7 +30,13 @@ public class AuthController {
 
     @ModelAttribute
     public void prepareContext(final Model model) {
-        model.addAttribute("roleValues", UserRole.values());
+
+        UserRole[] allRoles = UserRole.values();
+        List<UserRole> filteredRoles = Arrays.stream(allRoles)
+                .filter(role -> role != UserRole.USER && role != UserRole.ADMIN)
+                .collect(Collectors.toList());
+
+        model.addAttribute("roleValues", filteredRoles);
     }
 
     @GetMapping("/login")
@@ -49,22 +59,22 @@ public class AuthController {
         return "auth/login";
     }
 
+    @GetMapping("/register")
+    public String register(@ModelAttribute final RegisterDto registerDto) {
+        return "auth/register";
+    }
+
     @PostMapping("/register")
-    public String register(@ModelAttribute @Valid final RegistrationRequest registrationRequest,
+    public String register(@ModelAttribute @Valid final RegisterDto registerDto,
                            final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "auth/register";
         }
 
-        registrationService.register(registrationRequest);
+        registrationService.register(registerDto);
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, "You have registered successfully.Please login.");
         return "redirect:/login";
-    }
-
-    @GetMapping("/register")
-    public String register(@ModelAttribute final RegistrationRequest registrationRequest) {
-        return "auth/register";
     }
 
 }

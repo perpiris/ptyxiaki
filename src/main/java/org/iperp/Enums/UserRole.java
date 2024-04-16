@@ -1,15 +1,17 @@
 package org.iperp.Enums;
 
-import lombok.experimental.FieldNameConstants;
+import lombok.Getter;
 
-@FieldNameConstants(onlyExplicitlyIncluded = true)
+@Getter
 public enum UserRole {
+    USER("User"),
+    ADMIN("Admin"),
+    DEVELOPER("Developer"),
+    RECRUITER("Recruiter");
 
-    @FieldNameConstants.Include
-    DEVELOPER,
-    @FieldNameConstants.Include
-    RECRUITER,
-    USER,
-    ADMIN
+    private final String displayName;
 
+    UserRole(String displayName) {
+        this.displayName = displayName;
+    }
 }

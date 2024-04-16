@@ -19,7 +19,7 @@
         <div th:replace="~{fragments/forms::inputRow(object='post', field='title', required=true, label='Title')}"/>
         <div th:replace="~{fragments/forms::inputRow(object='post', field='description', required=true, type='textarea', label='Description')}"/>
         <div th:replace="~{fragments/forms::inputRow(object='post', field='jobType', required=true, type='radio', label='Job Type')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='workLocation', required=true, type='radio', label='Work Location')}"/>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobLocation', required=true, type='radio', label='Job Location')}"/>
         <input type="submit" th:value="Update" class="btn btn-primary mt-4"/>
     </form>
 

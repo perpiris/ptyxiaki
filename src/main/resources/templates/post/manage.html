@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>My Posts</title>
 </head>
 <body>
+<div layout:fragment="content">
 
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1">My Posts</h1>
+        <div>
+            <a th:href="@{/posts/create}" class="btn btn-primary ms-2">Create new</a>
+        </div>
+    </div>
+
+    <div th:if="${posts.empty}">You haven't created any posts yet.</div>
+    <div th:if="${!posts.empty}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th><!-- --></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td>[[${post.title}]]</td>
+                <td>
+                    <div class="float-end text-nowrap">
+                        <a th:href="@{/posts/edit/{id}(id=${post.id})}" class="btn btn-sm btn-secondary">Edit</a>
+                        <form th:action="@{/posts/delete/{id}(id=${post.id})}"
+                              th:data-confirm-message="${'Are you sure you want to delete this post?'}" method="post"
+                              class="js-submit-confirm d-inline">
+                            <button type="submit" class="btn btn-sm btn-secondary">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination justify-content-center mt-3">
+                <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+                    <a th:href="@{/posts/manage(page=${pageNumber})}" class="page-link"
+                       th:text="${pageNumber + 1}">1</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+
+</div>
 </body>
 </html>

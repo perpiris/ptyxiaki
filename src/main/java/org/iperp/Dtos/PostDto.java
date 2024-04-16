@@ -27,4 +27,6 @@ public class PostDto {
     @NotNull(message = "This field is required.")
     private JobLocation jobLocation;
 
+    private String createdOn;
+
 }

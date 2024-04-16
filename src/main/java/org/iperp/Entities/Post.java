@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.iperp.Enums.JobType;
 import org.iperp.Enums.JobLocation;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -31,11 +34,14 @@ public class Post {
     private JobType jobType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "work_location", nullable = false)
+    @Column(name = "job_location", nullable = false)
     private JobLocation jobLocation;
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private AppUser createdBy;
+
+    @CreationTimestamp
+    private LocalDateTime createdOn;
 
 }

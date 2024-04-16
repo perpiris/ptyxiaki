@@ -5,8 +5,6 @@ import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface IPostService {
     Page<PostDto> findAll(int pageNumber, int pageSize, String sortBy);
 
@@ -18,11 +16,11 @@ public interface IPostService {
 
     Page<PostDto> findAllForManager(int pageNumber, int pageSize, String sortBy);
 
-    PostDto get(final Long id);
+    PostDto get(final Long postId);
 
-    void create(PostDto postDto);
+    Long create(PostDto postDto);
 
-    void update(final Long id, final PostDto postDto);
+    void edit(final Long postId, final PostDto postDto);
 
-    void delete(final Long id);
+    void delete(final Long postId);
 }

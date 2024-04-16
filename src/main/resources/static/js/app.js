@@ -17,7 +17,7 @@ handleEvent('submit', '.js-submit-confirm', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
     var filterForm = document.getElementById('filterForm');
     var jobTypeFilters = document.querySelectorAll('.jobTypeFilter');
-    var workLocationFilters = document.querySelectorAll('.jobLocationFilter');
+    var jobLocationFilters = document.querySelectorAll('.jobLocationFilter');
 
     function applyFilters() {
         filterForm.submit();
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filter.addEventListener('change', applyFilters);
     });
 
-    workLocationFilters.forEach(function(filter) {
+    jobLocationFilters.forEach(function(filter) {
         filter.addEventListener('change', applyFilters);
     });
 });
