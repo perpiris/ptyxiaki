@@ -10,6 +10,8 @@ import org.iperp.Enums.JobType;
 import org.iperp.Enums.JobLocation;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -43,5 +45,8 @@ public class Post {
 
     @CreationTimestamp
     private LocalDateTime createdOn;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    private List<Application> applications = new ArrayList<>();
 
 }

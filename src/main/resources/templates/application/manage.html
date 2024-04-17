@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout}">
+<head>
+    <title>My Applications</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div sec:authorize="hasAuthority('DEVELOPER')">
+        <div class="d-flex flex-wrap mb-4">
+            <h1 class="flex-grow-1">My Applications</h1>
+        </div>
+
+        <div th:if="${applications.empty}">You haven't applied to any posts yet.</div>
+        <div th:if="${!applications.empty}" class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th>Status</th>
+                    <th><!-- --></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="postApplication : ${applications}">
+                    <td>[[${postApplication.postTitle}]]</td>
+                    <td>[[${postApplication.status}]]</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <nav>
+                <ul class="pagination justify-content-center mt-3">
+                    <li th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:class="${pageNumber == currentPage} ? 'page-item active' : 'page-item'">
+                        <a th:href="@{/posts/manage(page=${pageNumber})}" class="page-link"
+                           th:text="${pageNumber + 1}">1</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+    <div sec:authorize="hasAuthority('RECRUITER')">
+        This content is only shown to RECRUITER.
+    </div>
+</div>
+</body>
+</html>
