@@ -7,4 +7,6 @@ public interface IApplicationService {
     Page<ApplicationDto> findAllForApplicant(int pageNumber, int pageSize, String sortBy);
 
     void applyToPost(Long postId);
+
+    void cancelApplication(Long applicationId);
 }

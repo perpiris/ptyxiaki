@@ -11,6 +11,7 @@ import org.iperp.Repositories.IPostRepository;
 import org.iperp.Security.SecurityUtility;
 import org.iperp.Services.IApplicationService;
 import org.iperp.Utilities.NotFoundException;
+import org.iperp.Utilities.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,6 +60,22 @@ public class ApplicationService implements IApplicationService {
 
         application.setStatus(ApplicationStatus.PENDING);
 
+        applicationRepository.save(application);
+    }
+
+    @Override
+    public void cancelApplication(Long applicationId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new NotFoundException("Application not found with ID: " + applicationId));
+
+        String username = SecurityUtility.getSessionUser();
+        AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
+
+        if (!application.getUser().getId().equals(user.getId())) {
+            throw new UnauthorizedException("You are not authorized to cancel this application");
+        }
+
+        application.setStatus(ApplicationStatus.WITHDRAWN);
         applicationRepository.save(application);
     }
 

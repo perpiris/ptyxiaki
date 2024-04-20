@@ -26,7 +26,15 @@
                 <tr th:each="postApplication : ${applications}">
                     <td>[[${postApplication.postTitle}]]</td>
                     <td>[[${postApplication.status}]]</td>
-                    <td></td>
+                    <td>
+                        <div class="float-end text-nowrap" th:unless="${postApplication.status == 'Withdrawn'}">
+                            <form th:action="@{/applications/cancel/{id}(id=${postApplication.id})}"
+                                  th:data-confirm-message="${'Are you sure you want to withdraw your application?'}" method="post"
+                                  class="js-submit-confirm d-inline">
+                                <button type="submit" class="btn btn-sm btn-secondary">Withdraw Application</button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>

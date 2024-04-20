@@ -5,6 +5,8 @@ import org.iperp.Dtos.PostDto;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
 import org.iperp.Services.IPostService;
+import org.iperp.Utilities.NotFoundException;
+import org.iperp.Utilities.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -94,7 +96,13 @@ public class PostController {
 
     @PreAuthorize("hasAuthority('RECRUITER')")
     @GetMapping("/edit/{id}")
-    public String edit(@PathVariable(name = "id") Long postId, Model model) {
+    public String edit(@PathVariable(name = "id") Long postId, Model model, RedirectAttributes redirectAttributes) {
+
+        var isOwner = postService.isOwner(postId);
+        if (!isOwner) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to edit this post.");
+            return "redirect:/posts/manage";
+        }
 
         model.addAttribute("post", postService.get(postId));
         return "post/edit";
@@ -108,20 +116,36 @@ public class PostController {
             return "post/edit";
         }
 
-        postService.edit(postId, postDto);
-        redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post updated successfully.");
+        try {
+            postService.edit(postId, postDto);
+            redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post updated successfully.");
 
-        return "redirect:/posts/manage";
+            return "redirect:/posts/manage";
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
+            return "redirect:/posts/manage";
+        } catch (UnauthorizedException e) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to edit this post.");
+            return "redirect:/posts/manage";
+        }
     }
 
     @PreAuthorize("hasAuthority('RECRUITER')")
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable(name = "id") Long postId, RedirectAttributes redirectAttributes) {
 
-        postService.delete(postId);
-        redirectAttributes.addFlashAttribute("MSG_INFO", "Post deleted successfully.");
+        try {
+            postService.delete(postId);
+            redirectAttributes.addFlashAttribute("MSG_INFO", "Post deleted successfully.");
 
-        return "redirect:/posts/manage";
+            return "redirect:/posts/manage";
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
+            return "redirect:/posts/manage";
+        } catch (UnauthorizedException e) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to delete this post.");
+            return "redirect:/posts/manage";
+        }
     }
 
     @PreAuthorize("hasAuthority('RECRUITER')")

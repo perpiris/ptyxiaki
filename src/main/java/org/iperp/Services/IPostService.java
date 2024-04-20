@@ -23,4 +23,6 @@ public interface IPostService {
     void edit(final Long postId, final PostDto postDto);
 
     void delete(final Long postId);
+
+    boolean isOwner(Long postId);
 }

@@ -10,6 +10,7 @@ import org.iperp.Repositories.IPostRepository;
 import org.iperp.Security.SecurityUtility;
 import org.iperp.Services.IPostService;
 import org.iperp.Utilities.NotFoundException;
+import org.iperp.Utilities.UnauthorizedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -96,17 +97,29 @@ public class PostService implements IPostService {
     @Override
     public void edit(final Long postId, final PostDto postDto) {
         final Post post = postRepository.findById(postId)
-                .orElseThrow(NotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("Post not found with ID: " + postId));
+
+        if (!isOwner(postId)) {
+            throw new UnauthorizedException("Only the creator can edit this post");
+        }
+
         mapToEntity(postDto, post);
         postRepository.save(post);
     }
 
     @Override
     public void delete(final Long postId) {
-        postRepository.deleteById(postId);
+        final Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Post not found with ID: " + postId));
+
+        if (!isOwner(postId)) {
+            throw new UnauthorizedException("Only the creator can delete this post");
+        }
+
+        postRepository.delete(post);
     }
 
-    private boolean isOwner(Long postId) {
+    public boolean isOwner(Long postId) {
         String username = SecurityUtility.getSessionUser();
         Optional<Post> postOptional = postRepository.findByIdAndCreatedByUsername(postId, username);
         return postOptional.isPresent();
