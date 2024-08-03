@@ -5,8 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.iperp.Entities.PostSkill;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,5 +32,7 @@ public class PostDto {
     private JobLocation jobLocation;
 
     private String createdOn;
+
+    private List<PostSkillDto> skills = new ArrayList<>();
 
 }

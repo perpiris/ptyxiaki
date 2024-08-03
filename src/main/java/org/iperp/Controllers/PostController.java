@@ -5,6 +5,8 @@ import org.iperp.Dtos.PostDto;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
 import org.iperp.Services.IPostService;
+import org.iperp.Services.ISkillService;
+import org.iperp.Services.IUserService;
 import org.iperp.Utilities.NotFoundException;
 import org.iperp.Utilities.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/posts")
 @PreAuthorize("hasAuthority('USER')")
@@ -23,6 +27,10 @@ public class PostController {
 
     @Autowired
     private IPostService postService;
+    @Autowired
+    private ISkillService skillService;
+    @Autowired
+    private IUserService userService;
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -67,9 +75,17 @@ public class PostController {
     }
 
     @GetMapping("/details/{id}")
-    public String details(@PathVariable("id") long postId, Model model) {
+    public String details(@PathVariable("id") long postId, Model model, Principal principal) {
+        PostDto post = postService.get(postId);
+        model.addAttribute("post", post);
 
-        model.addAttribute("post", postService.get(postId));
+        if (principal != null) {
+            var userSkillIds = userService.getUserSkills(principal.getName());
+            model.addAttribute("userSkills", userSkillIds);
+        } else {
+            model.addAttribute("userSkills", java.util.Collections.emptySet());
+        }
+
         return "post/details";
     }
 
@@ -105,6 +121,7 @@ public class PostController {
         }
 
         model.addAttribute("post", postService.get(postId));
+        model.addAttribute("allSkills", skillService.getAllSkills());
         return "post/edit";
     }
 

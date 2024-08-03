@@ -8,23 +8,78 @@
 <div layout:fragment="content">
 
     <div class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">Create new post</h1>
+        <h1 id="create-new-post" class="flex-grow-1">Create new post</h1>
         <div>
-            <a th:href="@{/posts/manage}" class="btn btn-secondary">Back</a>
+            <a class="btn btn-secondary" th:href="@{/posts/manage}">Back</a>
         </div>
     </div>
 
-    <div th:replace="~{fragments/forms::globalErrors('post')}"/>
-    <form th:action="${requestUri}" method="post" autocomplete="off">
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='title', required=true, label='Title')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='description', required=true, type='textarea', label='Description')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobType', required=true, type='radio', label='Job Type')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobLocation', required=true, type='radio', label='Work Location')}"/>
+    <form th:action="@{/posts/create}" th:object="${post}" method="post">
+        <div th:replace="~{fragments/forms::globalErrors('post')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='title', required=true, label='Title')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='description', required=true, type='textarea', label='Description')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobType', required=true, type='radio', label='Job Type')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobLocation', required=true, type='radio', label='Work Location')}"></div>
+
+        <!-- Requirements section -->
+        <div id="requirementsContainer">
+            <h3>Requirements</h3>
+            <div th:each="skill, skill : *{skills}" class="requirement-row mb-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" th:field="*{skills[__${skill.index}__].skillDescription}" placeholder="Requirement description" required>
+                        <span class="text-danger" th:if="${#fields.hasErrors('skills[__${skill.index}__].skillDescription')}" th:errors="*{skills[__${skill.index}__].skillDescription}"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" class="form-control" th:field="*{skills[__${skill.index}__].years}" placeholder="Years of experience" required>
+                        <span class="text-danger" th:if="${#fields.hasErrors('skills[__${skill.index}__].years')}" th:errors="*{skills[__${skill.index}__].years}"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger remove-requirement">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary mb-3" id="addRequirement">Add Requirement</button>
 
         <div class="d-flex justify-content-end">
-            <input type="submit" th:value="Create" class="btn btn-primary mt-4"/>
+            <button type="submit" class="btn btn-primary">Create Post</button>
         </div>
     </form>
+
+    <!-- JavaScript for dynamic requirement rows -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            let requirementCount = /*[[${post.skills.size()}]]*/ 0;
+
+            document.getElementById('addRequirement').addEventListener('click', function() {
+                const container = document.getElementById('requirementsContainer');
+                const newRow = document.createElement('div');
+                newRow.className = 'requirement-row mb-3';
+                newRow.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="skills[${requirementCount}].skillDescription" placeholder="Requirement description" required>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="number" class="form-control" name="skills[${requirementCount}].years" placeholder="Years of experience" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-danger remove-requirement">Remove</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(newRow);
+                requirementCount++;
+            });
+
+            document.getElementById('requirementsContainer').addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('remove-requirement')) {
+                    e.target.closest('.requirement-row').remove();
+                }
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

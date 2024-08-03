@@ -1,12 +1,16 @@
 package org.iperp.Services.Implementation;
 
 import org.iperp.Dtos.PostDto;
+import org.iperp.Dtos.PostSkillDto;
 import org.iperp.Entities.AppUser;
 import org.iperp.Entities.Post;
+import org.iperp.Entities.PostSkill;
+import org.iperp.Entities.Skill;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
 import org.iperp.Repositories.IAppUserRepository;
 import org.iperp.Repositories.IPostRepository;
+import org.iperp.Repositories.ISkillRepository;
 import org.iperp.Security.SecurityUtility;
 import org.iperp.Services.IPostService;
 import org.iperp.Utilities.NotFoundException;
@@ -19,18 +23,23 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService implements IPostService {
 
     private final IPostRepository postRepository;
     private final IAppUserRepository appUserRepository;
+    private final ISkillRepository skillRepository;
 
     public PostService(final IPostRepository postRepository,
-                       final IAppUserRepository appUserRepository) {
+                       final IAppUserRepository appUserRepository,
+                       final ISkillRepository skillRepository) {
         this.postRepository = postRepository;
         this.appUserRepository = appUserRepository;
+        this.skillRepository = skillRepository;
     }
 
     public Page<PostDto> findAll(int pageNumber, int pageSize, String sortBy) {
@@ -91,6 +100,12 @@ public class PostService implements IPostService {
         AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
         post.setCreatedBy(user);
 
+        post.getSkills().forEach(postSkill -> {
+            Skill skill = getOrCreateSkill(postDto.getSkills().get(post.getSkills().indexOf(postSkill)).getDescription());
+            postSkill.setSkill(skill);
+            postSkill.setPost(post);
+        });
+
         return postRepository.save(post).getId();
     }
 
@@ -104,6 +119,12 @@ public class PostService implements IPostService {
         }
 
         mapToEntity(postDto, post);
+        post.getSkills().forEach(postSkill -> {
+            Skill skill = getOrCreateSkill(postSkill.getSkill().getDescription());
+            postSkill.setSkill(skill);
+        });
+
+
         postRepository.save(post);
     }
 
@@ -125,6 +146,15 @@ public class PostService implements IPostService {
         return postOptional.isPresent();
     }
 
+    private Skill getOrCreateSkill(String description) {
+        return skillRepository.findByDescriptionIgnoreCase(description.toUpperCase())
+                .orElseGet(() -> {
+                    Skill newSkill = new Skill();
+                    newSkill.setDescription(description.toUpperCase());
+                    return skillRepository.save(newSkill);
+                });
+    }
+
     private PostDto mapToDto(final Post post, final PostDto postDto) {
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
@@ -132,7 +162,18 @@ public class PostService implements IPostService {
         postDto.setJobType(post.getJobType());
         postDto.setJobLocation(post.getJobLocation());
         postDto.setCreatedOn(calculateRelativeTime(post.getCreatedOn()));
+        postDto.setSkills(post.getSkills().stream()
+                .map(this::mapPostSkillToDto)
+                .collect(Collectors.toList()));
         return postDto;
+    }
+
+    private PostSkillDto mapPostSkillToDto(PostSkill postSkill) {
+        PostSkillDto dto = new PostSkillDto();
+        dto.setSkillId(postSkill.getSkill().getId());
+        dto.setDescription(postSkill.getSkill().getDescription());
+        dto.setYears(postSkill.getYears());
+        return dto;
     }
 
     private void mapToEntity(final PostDto postDto, final Post post) {
@@ -140,6 +181,18 @@ public class PostService implements IPostService {
         post.setDescription(postDto.getDescription());
         post.setJobType(postDto.getJobType());
         post.setJobLocation(postDto.getJobLocation());
+
+        if (post.getSkills() == null) {
+            post.setSkills(new ArrayList<>());
+        } else {
+            post.getSkills().clear();
+        }
+
+        postDto.getSkills().forEach(skillDto -> {
+            PostSkill postSkill = new PostSkill();
+            postSkill.setYears(skillDto.getYears());
+            post.getSkills().add(postSkill);
+        });
     }
 
     private String calculateRelativeTime(LocalDateTime createdDate) {
