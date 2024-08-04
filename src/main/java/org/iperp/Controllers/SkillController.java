@@ -3,8 +3,6 @@ package org.iperp.Controllers;
 import org.iperp.Dtos.SkillDto;
 import org.iperp.Entities.UserSkill;
 import org.iperp.Services.ISkillService;
-import org.iperp.Services.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,18 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
 @RequestMapping("/skills")
-@PreAuthorize("hasAuthority('USER')")
+@PreAuthorize("hasAuthority('DEVELOPER')")
 public class SkillController {
 
-    @Autowired
-    private ISkillService skillService;
-    @Autowired
-    private IUserService userService;
+    private final ISkillService skillService;
+
+    public SkillController(ISkillService skillService) {
+        this.skillService = skillService;
+    }
 
     @GetMapping("/manage")
     public String manage(Model model) {
@@ -45,6 +43,19 @@ public class SkillController {
             redirectAttributes.addFlashAttribute("successMessage", "Skill added successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error adding skill: " + e.getMessage());
+        }
+        return "redirect:/skills/manage";
+    }
+
+    @PostMapping("/edit")
+    public String editSkill(@RequestParam Long userSkillId,
+                            @RequestParam int years,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            skillService.updateUserSkillYears(userSkillId, years);
+            redirectAttributes.addFlashAttribute("successMessage", "Skill years updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating skill years: " + e.getMessage());
         }
         return "redirect:/skills/manage";
     }

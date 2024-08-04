@@ -30,14 +30,16 @@
                 <td>[[${post.title}]]</td>
                 <td>
                     <form th:action="@{/posts/toggle-applications/{id}(id=${post.id})}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm" th:classappend="${post.acceptingApplications ? 'btn-success' : 'btn-secondary'}">
+                        <button type="submit" class="btn btn-sm"
+                                th:classappend="${post.acceptingApplications ? 'btn-success' : 'btn-secondary'}">
                             [[${post.acceptingApplications ? 'On' : 'Off'}]]
                         </button>
                     </form>
                 </td>
                 <td>
                     <form th:action="@{/posts/toggle-archive/{id}(id=${post.id})}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm" th:classappend="${post.archived ? 'btn-warning' : 'btn-secondary'}">
+                        <button type="submit" class="btn btn-sm"
+                                th:classappend="${post.archived ? 'btn-warning' : 'btn-secondary'}">
                             [[${post.archived ? 'Archived' : 'Active'}]]
                         </button>
                     </form>

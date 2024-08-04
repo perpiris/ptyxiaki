@@ -7,11 +7,11 @@
 <body>
 <div layout:fragment="content">
     <h1 class="mb-4">Login</h1>
-    <div th:replace="~{fragments/forms::globalErrors('authentication')}" />
+    <div th:replace="~{fragments/forms::globalErrors('authentication')}"/>
     <form th:action="${requestUri}" method="post">
-        <div th:replace="~{fragments/forms::inputRow(object='authentication', field='username', required=true, label='Username')}" />
-        <div th:replace="~{fragments/forms::inputRow(object='authentication', field='password', required=true, type='password', label='Password')}" />
-        <input type="submit" th:value="Login" class="btn btn-primary mt-4" />
+        <div th:replace="~{fragments/forms::inputRow(object='authentication', field='username', required=true, label='Username')}"/>
+        <div th:replace="~{fragments/forms::inputRow(object='authentication', field='password', required=true, type='password', label='Password')}"/>
+        <input type="submit" th:value="Login" class="btn btn-primary mt-4"/>
     </form>
     <p class="mt-5">
         <a th:href="@{/register}">Click here if you don't have an account.</a>

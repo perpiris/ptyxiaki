@@ -6,7 +6,6 @@ import org.iperp.Dtos.RegisterDto;
 import org.iperp.Enums.UserRole;
 import org.iperp.Services.IRegistrationService;
 import org.iperp.Utilities.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,26 +22,23 @@ import java.util.stream.Collectors;
 @Controller
 public class AuthController {
 
-    @Autowired
-    private IRegistrationService registrationService;
+    private final IRegistrationService registrationService;
+
+    public AuthController(IRegistrationService registrationService) {
+        this.registrationService = registrationService;
+    }
 
     @ModelAttribute
     public void prepareContext(final Model model) {
 
         UserRole[] allRoles = UserRole.values();
-        List<UserRole> filteredRoles = Arrays.stream(allRoles)
-                .filter(role -> role != UserRole.USER && role != UserRole.ADMIN)
-                .collect(Collectors.toList());
+        List<UserRole> filteredRoles = Arrays.stream(allRoles).filter(role -> role != UserRole.USER && role != UserRole.ADMIN).collect(Collectors.toList());
 
         model.addAttribute("roleValues", filteredRoles);
     }
 
     @GetMapping("/login")
-    public String login(
-            @RequestParam(name = "loginRequired", required = false) final Boolean loginRequired,
-            @RequestParam(name = "loginError", required = false) final Boolean loginError,
-            @RequestParam(name = "logoutSuccess", required = false) final Boolean logoutSuccess,
-            final Model model) {
+    public String login(@RequestParam(name = "loginRequired", required = false) final Boolean loginRequired, @RequestParam(name = "loginError", required = false) final Boolean loginError, @RequestParam(name = "logoutSuccess", required = false) final Boolean logoutSuccess, final Model model) {
 
         model.addAttribute("authentication", new LoginDto());
         if (loginRequired == Boolean.TRUE) {
@@ -63,8 +59,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute @Valid final RegisterDto registerDto,
-                           final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
+    public String register(@ModelAttribute @Valid final RegisterDto registerDto, final BindingResult bindingResult, final RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "auth/register";

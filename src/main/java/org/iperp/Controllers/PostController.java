@@ -10,7 +10,6 @@ import org.iperp.Services.ISkillService;
 import org.iperp.Services.IUserService;
 import org.iperp.Utilities.NotFoundException;
 import org.iperp.Utilities.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -25,14 +24,17 @@ import java.security.Principal;
 @RequestMapping("/posts")
 public class PostController {
 
-    @Autowired
-    private IPostService postService;
-    @Autowired
-    private ISkillService skillService;
-    @Autowired
-    private IUserService userService;
-    @Autowired
-    private IApplicationService applicationService;
+    private final IPostService postService;
+    private final ISkillService skillService;
+    private final IUserService userService;
+    private final IApplicationService applicationService;
+
+    public PostController(IPostService postService, ISkillService skillService, IUserService userService, IApplicationService applicationService) {
+        this.postService = postService;
+        this.skillService = skillService;
+        this.userService = userService;
+        this.applicationService = applicationService;
+    }
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -41,13 +43,7 @@ public class PostController {
     }
 
     @GetMapping("/list")
-    public String list(@RequestParam(defaultValue = "0") int page,
-                       @RequestParam(defaultValue = "10") int size,
-                       @RequestParam(defaultValue = "id") String sortBy,
-                       @RequestParam(required = false) JobType jobType,
-                       @RequestParam(required = false) JobLocation jobLocation,
-                       final Model model,
-                       Principal principal) {
+    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, @RequestParam(required = false) JobType jobType, @RequestParam(required = false) JobLocation jobLocation, final Model model, Principal principal) {
 
         model.addAttribute("selectedJobType", null);
         model.addAttribute("selectedJobLocation", null);
@@ -109,9 +105,10 @@ public class PostController {
 
     @PreAuthorize("hasAuthority('RECRUITER')")
     @PostMapping("/create")
-    public String create(@ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String create(@ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("skills", postDto.getSkills());
             return "post/create";
         }
 
@@ -124,23 +121,27 @@ public class PostController {
     @PreAuthorize("hasAuthority('RECRUITER')")
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") Long postId, Model model, RedirectAttributes redirectAttributes) {
-
         var isOwner = postService.isOwner(postId);
         if (!isOwner) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to edit this post.");
             return "redirect:/posts/manage";
         }
 
-        model.addAttribute("post", postService.get(postId));
+        PostDto postDto = postService.get(postId);
+        model.addAttribute("post", postDto);
+        model.addAttribute("skills", postDto.getSkills()); // Add this line
         model.addAttribute("allSkills", skillService.getAllSkills());
         return "post/edit";
     }
 
     @PreAuthorize("hasAuthority('RECRUITER')")
     @PostMapping("/edit/{id}")
-    public String edit(@PathVariable(name = "id") Long postId, @ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String edit(@PathVariable(name = "id") Long postId, @ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         if (bindingResult.hasErrors()) {
+            // Add the skills back to the model
+            model.addAttribute("skills", postDto.getSkills());
+            model.addAttribute("allSkills", skillService.getAllSkills());
             return "post/edit";
         }
 
@@ -188,10 +189,7 @@ public class PostController {
 
     @PreAuthorize("hasAuthority('RECRUITER')")
     @GetMapping("/manage")
-    public String manage(@RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size,
-                         @RequestParam(defaultValue = "id") String sortBy,
-                         final Model model) {
+    public String manage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, final Model model) {
 
         Page<PostDto> postPage = postService.findAllForManager(page, size, sortBy);
         model.addAttribute("posts", postPage.getContent());

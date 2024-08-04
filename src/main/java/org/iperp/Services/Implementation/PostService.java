@@ -104,7 +104,7 @@ public class PostService implements IPostService {
         post.setSkills(new ArrayList<>());
 
         postDto.getSkills().forEach(skillDto -> {
-            Skill skill = getOrCreateSkill(skillDto.getDescription());
+            Skill skill = getOrCreateSkill(skillDto.getDescription().toUpperCase());
             PostSkill postSkill = PostSkill.builder()
                     .post(post)
                     .skill(skill)
@@ -134,7 +134,7 @@ public class PostService implements IPostService {
         post.getSkills().clear();
 
         postDto.getSkills().forEach(skillDto -> {
-            Skill skill = getOrCreateSkill(skillDto.getDescription());
+            Skill skill = getOrCreateSkill(skillDto.getDescription().toUpperCase());
             PostSkill postSkill = PostSkill.builder()
                     .post(post)
                     .skill(skill)
@@ -169,6 +169,7 @@ public class PostService implements IPostService {
         }
 
         post.setArchived(!post.isArchived());
+        post.setAcceptingApplications(false);
         postRepository.save(post);
     }
 

@@ -3,7 +3,6 @@ package org.iperp.Controllers;
 import org.iperp.Dtos.ApplicationDto;
 import org.iperp.Services.IApplicationService;
 import org.iperp.Utilities.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,14 +15,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @PreAuthorize("hasAuthority('USER')")
 public class ApplicationController {
 
-    @Autowired
-    private IApplicationService applicationService;
+    private final IApplicationService applicationService;
+
+    public ApplicationController(IApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
 
     @GetMapping("/manage")
-    public String manage(@RequestParam(defaultValue = "0") int page,
-                         @RequestParam(defaultValue = "10") int size,
-                         @RequestParam(defaultValue = "id") String sortBy,
-                         final Model model) {
+    public String manage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, final Model model) {
 
         Page<ApplicationDto> applicationPage = applicationService.findAllForApplicant(page, size, sortBy);
         model.addAttribute("applications", applicationPage.getContent());

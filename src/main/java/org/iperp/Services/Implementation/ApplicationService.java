@@ -12,7 +12,6 @@ import org.iperp.Security.SecurityUtility;
 import org.iperp.Services.IApplicationService;
 import org.iperp.Utilities.NotFoundException;
 import org.iperp.Utilities.UnauthorizedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,12 +21,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicationService implements IApplicationService {
 
-    @Autowired
-    private IPostRepository postRepository;
-    @Autowired
-    private IAppUserRepository appUserRepository;
-    @Autowired
-    private IApplicationRepository applicationRepository;
+    private final IPostRepository postRepository;
+    private final IAppUserRepository appUserRepository;
+    private final IApplicationRepository applicationRepository;
+
+    public ApplicationService(IPostRepository postRepository, IAppUserRepository appUserRepository, IApplicationRepository applicationRepository) {
+        this.postRepository = postRepository;
+        this.appUserRepository = appUserRepository;
+        this.applicationRepository = applicationRepository;
+    }
 
     @Override
     public Page<ApplicationDto> findAllForApplicant(int pageNumber, int pageSize, String sortBy) {
@@ -48,15 +50,16 @@ public class ApplicationService implements IApplicationService {
             throw new IllegalArgumentException("The user who created the post cannot apply to it.");
         }
 
+        if (post.isArchived() || !post.isAcceptingApplications()) {
+            throw new IllegalArgumentException("This post no longer accepts applications.");
+        }
+
         boolean hasApplied = post.getApplications().stream().anyMatch(application -> application.getUser().getId().equals(user.getId()));
         if (hasApplied) {
             throw new IllegalArgumentException("You have already applied to this post.");
         }
 
-        Application application = Application.builder()
-                .user(user)
-                .post(post)
-                .build();
+        Application application = Application.builder().user(user).post(post).build();
 
         application.setStatus(ApplicationStatus.PENDING);
 
@@ -71,8 +74,7 @@ public class ApplicationService implements IApplicationService {
 
     @Override
     public void cancelApplication(Long applicationId) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new NotFoundException("Application not found with ID: " + applicationId));
+        Application application = applicationRepository.findById(applicationId).orElseThrow(() -> new NotFoundException("Application not found with ID: " + applicationId));
 
         String username = SecurityUtility.getSessionUser();
         AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
@@ -91,8 +93,5 @@ public class ApplicationService implements IApplicationService {
         applicationDto.setStatus(application.getStatus().getDisplayName());
         return applicationDto;
     }
-
-    private void mapToEntity(final ApplicationDto applicationDto, final Application application) {
-
-    }
+    
 }

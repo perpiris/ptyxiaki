@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
     <title>My Applications</title>
@@ -29,7 +30,8 @@
                     <td>
                         <div class="float-end text-nowrap" th:unless="${postApplication.status == 'Withdrawn'}">
                             <form th:action="@{/applications/cancel/{id}(id=${postApplication.id})}"
-                                  th:data-confirm-message="${'Are you sure you want to withdraw your application?'}" method="post"
+                                  th:data-confirm-message="${'Are you sure you want to withdraw your application?'}"
+                                  method="post"
                                   class="js-submit-confirm d-inline">
                                 <button type="submit" class="btn btn-sm btn-secondary">Withdraw Application</button>
                             </form>

@@ -38,6 +38,6 @@ public class AppUser {
     )
     private Set<AppRole> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<UserSkill> skills;
 }

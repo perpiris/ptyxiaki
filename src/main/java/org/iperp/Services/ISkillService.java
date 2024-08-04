@@ -11,7 +11,9 @@ public interface ISkillService {
 
     List<UserSkill> getUserSkills();
 
-    void addSkillToUser(String skillDescription, int years);
+    void addSkillToUser(String skillDescription, int years) throws Exception;
+
+    void updateUserSkillYears(Long userSkillId, int years) throws Exception;
 
     void removeSkillFromUser(Long skillId);
 }

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface IPostRepository extends JpaRepository<Post, Long> {
+
     Optional<Post> findByIdAndCreatedByUsername(Long postId, String username);
 
     Page<Post> findAllByCreatedBy(AppUser user, Pageable pageable);
@@ -20,4 +21,5 @@ public interface IPostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByJobLocation(JobLocation jobLocation, Pageable pageable);
 
     Page<Post> findByJobTypeAndJobLocation(JobType jobType, JobLocation jobLocation, Pageable pageable);
+    
 }

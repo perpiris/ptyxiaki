@@ -6,11 +6,12 @@
     <title th:text="${post.title}"></title>
     <style>
         .job-detail-card {
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
             transition: 0.3s;
             border-radius: 5px;
             background-color: #fff;
         }
+
         .skill-chip {
             display: inline-block;
             padding: 0 12px;
@@ -21,14 +22,17 @@
             background-color: #f1f1f1;
             margin: 2px;
         }
+
         .badge {
             font-size: 1rem;
             padding: 0.5rem 1rem;
         }
+
         .skill-list {
             padding: 0;
             list-style-type: none;
         }
+
         .skill-chip {
             display: inline-block;
             padding: 0 12px;
@@ -38,12 +42,14 @@
             border-radius: 25px;
             margin: 2px;
         }
+
         .skill-chip.bg-success,
         .skill-chip.bg-warning,
         .skill-chip.bg-danger,
         .skill-chip.bg-info {
             color: white;
         }
+
         .skill-chip.bg-warning {
             color: #212529;
         }
@@ -53,7 +59,7 @@
 <div layout:fragment="content" class="container mt-4">
 
     <div class="alert alert-warning" th:if="${post.archived}">
-        This job posting has been archived and is no longer active.
+        This job posting has been archived and is no longer accepting applications.
     </div>
 
     <div class="job-detail-card p-4">
@@ -75,7 +81,8 @@
                     </form>
                 </div>
 
-                <form th:if="${!userHasApplied and post.acceptingApplications}" th:action="@{/applications/apply}" method="post">
+                <form th:if="${!userHasApplied and post.acceptingApplications}" th:action="@{/applications/apply}"
+                      method="post">
                     <input type="hidden" name="postId" th:value="${post.id}"/>
                     <button type="submit" class="btn btn-primary btn-lg">Apply Now</button>
                 </form>

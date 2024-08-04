@@ -25,7 +25,7 @@
         <div id="requirementsContainer">
             <h3>Requirements</h3>
             <ul id="requirementsList" class="list-group mb-3">
-
+                <!-- This will be populated by JavaScript -->
             </ul>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRequirementModal">
                 Add Requirement
@@ -37,7 +37,8 @@
         </div>
     </form>
 
-    <div class="modal fade" id="addRequirementModal" tabindex="-1" aria-labelledby="addRequirementModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addRequirementModal" tabindex="-1" aria-labelledby="addRequirementModalLabel"
+         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -63,19 +64,19 @@
     </div>
 
     <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const requirementsList = document.getElementById('requirementsList');
             const addRequirementModal = new bootstrap.Modal(document.getElementById('addRequirementModal'));
             const saveRequirementBtn = document.getElementById('saveRequirement');
             let skillIndex = 0;
 
             // Load existing skills
-            const existingSkills = /*[[${post.skills}]]*/ [];
+            const existingSkills = /*[[${skills}]]*/ [];
             existingSkills.forEach(skill => {
                 addRequirementToList(skill.description, skill.years);
             });
 
-            saveRequirementBtn.addEventListener('click', function() {
+            saveRequirementBtn.addEventListener('click', function () {
                 const description = document.getElementById('skillDescription').value.trim();
                 const years = document.getElementById('skillYears').value.trim();
 
@@ -100,11 +101,22 @@
                 skillIndex++;
             }
 
-            requirementsList.addEventListener('click', function(e) {
+            requirementsList.addEventListener('click', function (e) {
                 if (e.target.classList.contains('remove-skill')) {
                     e.target.closest('li').remove();
+                    updateSkillIndexes();
                 }
             });
+
+            function updateSkillIndexes() {
+                const skills = requirementsList.querySelectorAll('li');
+                skills.forEach((skill, index) => {
+                    const inputs = skill.querySelectorAll('input');
+                    inputs[0].name = `skills[${index}].description`;
+                    inputs[1].name = `skills[${index}].years`;
+                });
+                skillIndex = skills.length;
+            }
         });
     </script>
 </div>
