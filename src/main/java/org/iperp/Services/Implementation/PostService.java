@@ -100,13 +100,20 @@ public class PostService implements IPostService {
         AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
         post.setCreatedBy(user);
 
-        post.getSkills().forEach(postSkill -> {
-            Skill skill = getOrCreateSkill(postDto.getSkills().get(post.getSkills().indexOf(postSkill)).getDescription());
-            postSkill.setSkill(skill);
-            postSkill.setPost(post);
+        post.setSkills(new ArrayList<>());
+
+        postDto.getSkills().forEach(skillDto -> {
+            Skill skill = getOrCreateSkill(skillDto.getDescription());
+            PostSkill postSkill = PostSkill.builder()
+                    .post(post)
+                    .skill(skill)
+                    .years(skillDto.getYears())
+                    .build();
+            post.getSkills().add(postSkill);
         });
 
-        return postRepository.save(post).getId();
+        Post savedPost = postRepository.save(post);
+        return savedPost.getId();
     }
 
     @Override
@@ -170,7 +177,7 @@ public class PostService implements IPostService {
 
     private PostSkillDto mapPostSkillToDto(PostSkill postSkill) {
         PostSkillDto dto = new PostSkillDto();
-        dto.setSkillId(postSkill.getSkill().getId());
+        dto.setId(postSkill.getSkill().getId());
         dto.setDescription(postSkill.getSkill().getDescription());
         dto.setYears(postSkill.getYears());
         return dto;

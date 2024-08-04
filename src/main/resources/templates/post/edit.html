@@ -2,27 +2,111 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Edit</title>
+    <title>Edit Post</title>
 </head>
 <body>
 <div layout:fragment="content">
 
     <div class="d-flex flex-wrap mb-4">
-        <h1 class="flex-grow-1">Edit post</h1>
+        <h1 id="edit-post" class="flex-grow-1">Edit Post</h1>
         <div>
-            <a th:href="@{/posts/manage}" class="btn btn-secondary">Back</a>
+            <a class="btn btn-secondary" th:href="@{/posts/manage}">Back</a>
         </div>
     </div>
 
-    <div th:replace="~{fragments/forms::globalErrors('post')}"/>
-    <form th:action="${requestUri}" method="post" autocomplete="off">
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='title', required=true, label='Title')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='description', required=true, type='textarea', label='Description')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobType', required=true, type='radio', label='Job Type')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobLocation', required=true, type='radio', label='Job Location')}"/>
-        <input type="submit" th:value="Update" class="btn btn-primary mt-4"/>
+    <form th:action="@{/posts/edit/{id}(id=${post.id})}" th:object="${post}" method="post">
+        <input type="hidden" th:field="*{id}">
+        <div th:replace="~{fragments/forms::globalErrors('post')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='title', required=true, label='Title')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='description', required=true, type='textarea', label='Description')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobType', required=true, type='radio', label='Job Type')}"></div>
+        <div th:replace="~{fragments/forms::inputRow(object='post', field='jobLocation', required=true, type='radio', label='Work Location')}"></div>
+
+        <div id="requirementsContainer">
+            <h3>Requirements</h3>
+            <ul id="requirementsList" class="list-group mb-3">
+
+            </ul>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRequirementModal">
+                Add Requirement
+            </button>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Update Post</button>
+        </div>
     </form>
 
+    <div class="modal fade" id="addRequirementModal" tabindex="-1" aria-labelledby="addRequirementModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRequirementModalLabel">Add Requirement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="skillDescription" class="form-label">Skill Description</label>
+                        <input type="text" class="form-control" id="skillDescription" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="skillYears" class="form-label">Years of Experience</label>
+                        <input type="number" class="form-control" id="skillYears" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveRequirement">Save Requirement</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const requirementsList = document.getElementById('requirementsList');
+            const addRequirementModal = new bootstrap.Modal(document.getElementById('addRequirementModal'));
+            const saveRequirementBtn = document.getElementById('saveRequirement');
+            let skillIndex = 0;
+
+            // Load existing skills
+            const existingSkills = /*[[${post.skills}]]*/ [];
+            existingSkills.forEach(skill => {
+                addRequirementToList(skill.description, skill.years);
+            });
+
+            saveRequirementBtn.addEventListener('click', function() {
+                const description = document.getElementById('skillDescription').value.trim();
+                const years = document.getElementById('skillYears').value.trim();
+
+                if (description && years) {
+                    addRequirementToList(description, years);
+                    addRequirementModal.hide();
+                    document.getElementById('skillDescription').value = '';
+                    document.getElementById('skillYears').value = '';
+                }
+            });
+
+            function addRequirementToList(description, years) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                li.innerHTML = `
+                    ${description} - ${years} year(s)
+                    <input type="hidden" name="skills[${skillIndex}].description" value="${description}">
+                    <input type="hidden" name="skills[${skillIndex}].years" value="${years}">
+                    <button type="button" class="btn btn-danger btn-sm remove-skill">Remove</button>
+                `;
+                requirementsList.appendChild(li);
+                skillIndex++;
+            }
+
+            requirementsList.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-skill')) {
+                    e.target.closest('li').remove();
+                }
+            });
+        });
+    </script>
 </div>
 </body>
 </html>

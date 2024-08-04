@@ -21,64 +21,84 @@
         <div th:replace="~{fragments/forms::inputRow(object='post', field='jobType', required=true, type='radio', label='Job Type')}"></div>
         <div th:replace="~{fragments/forms::inputRow(object='post', field='jobLocation', required=true, type='radio', label='Work Location')}"></div>
 
-        <!-- Requirements section -->
         <div id="requirementsContainer">
             <h3>Requirements</h3>
-            <div th:each="skill, skill : *{skills}" class="requirement-row mb-3">
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" th:field="*{skills[__${skill.index}__].skillDescription}" placeholder="Requirement description" required>
-                        <span class="text-danger" th:if="${#fields.hasErrors('skills[__${skill.index}__].skillDescription')}" th:errors="*{skills[__${skill.index}__].skillDescription}"></span>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="number" class="form-control" th:field="*{skills[__${skill.index}__].years}" placeholder="Years of experience" required>
-                        <span class="text-danger" th:if="${#fields.hasErrors('skills[__${skill.index}__].years')}" th:errors="*{skills[__${skill.index}__].years}"></span>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-danger remove-requirement">Remove</button>
-                    </div>
-                </div>
-            </div>
+            <ul id="requirementsList" class="list-group mb-3">
+
+            </ul>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRequirementModal">
+                Add Requirement
+            </button>
         </div>
-        <button type="button" class="btn btn-secondary mb-3" id="addRequirement">Add Requirement</button>
 
         <div class="d-flex justify-content-end">
             <button type="submit" class="btn btn-primary">Create Post</button>
         </div>
     </form>
 
-    <!-- JavaScript for dynamic requirement rows -->
+    <div class="modal fade" id="addRequirementModal" tabindex="-1" aria-labelledby="addRequirementModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRequirementModalLabel">Add Requirement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="skillDescription" class="form-label">Skill Description</label>
+                        <input type="text" class="form-control" id="skillDescription" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="skillYears" class="form-label">Years of Experience</label>
+                        <input type="number" class="form-control" id="skillYears" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveRequirement">Save Requirement</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
-            let requirementCount = /*[[${post.skills.size()}]]*/ 0;
+        const requirementsList = document.getElementById('requirementsList');
+        const addRequirementModal = new bootstrap.Modal(document.getElementById('addRequirementModal'));
+        const saveRequirementBtn = document.getElementById('saveRequirement');
+        let skillIndex = 0;
 
-            document.getElementById('addRequirement').addEventListener('click', function() {
-                const container = document.getElementById('requirementsContainer');
-                const newRow = document.createElement('div');
-                newRow.className = 'requirement-row mb-3';
-                newRow.innerHTML = `
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" class="form-control" name="skills[${requirementCount}].skillDescription" placeholder="Requirement description" required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="number" class="form-control" name="skills[${requirementCount}].years" placeholder="Years of experience" required>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-danger remove-requirement">Remove</button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(newRow);
-                requirementCount++;
-            });
+        saveRequirementBtn.addEventListener('click', function() {
+            const description = document.getElementById('skillDescription').value.trim();
+            const years = document.getElementById('skillYears').value.trim();
 
-            document.getElementById('requirementsContainer').addEventListener('click', function(e) {
-                if (e.target && e.target.classList.contains('remove-requirement')) {
-                    e.target.closest('.requirement-row').remove();
-                }
-            });
+            if (description && years) {
+                addRequirementToList(description, years);
+                addRequirementModal.hide();
+                document.getElementById('skillDescription').value = '';
+                document.getElementById('skillYears').value = '';
+            }
         });
+
+        function addRequirementToList(description, years) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                ${description} - ${years} year(s)
+                <input type="hidden" name="skills[${skillIndex}].description" value="${description}">
+                <input type="hidden" name="skills[${skillIndex}].years" value="${years}">
+                <button type="button" class="btn btn-danger btn-sm remove-skill">Remove</button>
+            `;
+            requirementsList.appendChild(li);
+            skillIndex++;
+        }
+
+        requirementsList.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-skill')) {
+                e.target.closest('li').remove();
+            }
+        });
+    });
     </script>
 </div>
 </body>

@@ -1,7 +1,6 @@
 package org.iperp.Dtos;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class PostSkillDto {
 
-    private Long skillId;
+    private Long id;
 
     @NotEmpty(message = "This field is required.")
     private String description;

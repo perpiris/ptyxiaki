@@ -10,7 +10,7 @@ import lombok.Setter;
 public class UserSkillDto {
 
     @NotEmpty(message = "This field is required.")
-    private Long skillId;
+    private Long id;
 
     @NotEmpty(message = "This field is required.")
     @Size(max = 255)

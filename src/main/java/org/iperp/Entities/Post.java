@@ -49,7 +49,7 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     private List<Application> applications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
-    private List<PostSkill> skills;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<PostSkill> skills = new ArrayList<>();
 
 }
