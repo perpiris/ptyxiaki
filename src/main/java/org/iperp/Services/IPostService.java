@@ -3,6 +3,7 @@ package org.iperp.Services;
 import org.iperp.Dtos.PostDto;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
+import org.iperp.Utilities.UnauthorizedException;
 import org.springframework.data.domain.Page;
 
 public interface IPostService {
@@ -22,7 +23,9 @@ public interface IPostService {
 
     void edit(final Long postId, final PostDto postDto);
 
-    void delete(final Long postId);
+    void toggleAcceptingApplications(Long postId);
+
+    void toggleArchive(Long postId);
 
     boolean isOwner(Long postId);
 }

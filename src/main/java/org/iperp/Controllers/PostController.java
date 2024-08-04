@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.iperp.Dtos.PostDto;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
+import org.iperp.Services.IApplicationService;
 import org.iperp.Services.IPostService;
 import org.iperp.Services.ISkillService;
 import org.iperp.Services.IUserService;
@@ -22,7 +23,6 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/posts")
-@PreAuthorize("hasAuthority('USER')")
 public class PostController {
 
     @Autowired
@@ -31,6 +31,8 @@ public class PostController {
     private ISkillService skillService;
     @Autowired
     private IUserService userService;
+    @Autowired
+    private IApplicationService applicationService;
 
     @ModelAttribute
     public void prepareContext(final Model model) {
@@ -44,7 +46,8 @@ public class PostController {
                        @RequestParam(defaultValue = "id") String sortBy,
                        @RequestParam(required = false) JobType jobType,
                        @RequestParam(required = false) JobLocation jobLocation,
-                       final Model model) {
+                       final Model model,
+                       Principal principal) {
 
         model.addAttribute("selectedJobType", null);
         model.addAttribute("selectedJobLocation", null);
@@ -67,6 +70,13 @@ public class PostController {
             model.addAttribute("selectedJobLocation", jobLocation);
         }
 
+        if (principal != null) {
+            var userSkills = userService.getUserSkills(principal.getName());
+            model.addAttribute("userSkills", userSkills);
+        } else {
+            model.addAttribute("userSkills", java.util.Collections.emptySet());
+        }
+
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("currentPage", postPage.getNumber());
         model.addAttribute("totalPages", postPage.getTotalPages());
@@ -78,10 +88,11 @@ public class PostController {
     public String details(@PathVariable("id") long postId, Model model, Principal principal) {
         PostDto post = postService.get(postId);
         model.addAttribute("post", post);
+        model.addAttribute("userHasApplied", applicationService.hasUserAppliedToPost(postId));
 
         if (principal != null) {
-            var userSkillIds = userService.getUserSkills(principal.getName());
-            model.addAttribute("userSkills", userSkillIds);
+            var userSkills = userService.getUserSkills(principal.getName());
+            model.addAttribute("userSkills", userSkills);
         } else {
             model.addAttribute("userSkills", java.util.Collections.emptySet());
         }
@@ -148,21 +159,31 @@ public class PostController {
     }
 
     @PreAuthorize("hasAuthority('RECRUITER')")
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable(name = "id") Long postId, RedirectAttributes redirectAttributes) {
-
+    @PostMapping("/toggle-applications/{id}")
+    public String toggleAcceptingApplications(@PathVariable(name = "id") Long postId, RedirectAttributes redirectAttributes) {
         try {
-            postService.delete(postId);
-            redirectAttributes.addFlashAttribute("MSG_INFO", "Post deleted successfully.");
-
-            return "redirect:/posts/manage";
+            postService.toggleAcceptingApplications(postId);
+            redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post application status updated successfully.");
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
-            return "redirect:/posts/manage";
         } catch (UnauthorizedException e) {
-            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to delete this post.");
-            return "redirect:/posts/manage";
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to modify this post.");
         }
+        return "redirect:/posts/manage";
+    }
+
+    @PreAuthorize("hasAuthority('RECRUITER')")
+    @PostMapping("/toggle-archive/{id}")
+    public String toggleArchive(@PathVariable(name = "id") Long postId, RedirectAttributes redirectAttributes) {
+        try {
+            postService.toggleArchive(postId);
+            redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post archive status updated successfully.");
+        } catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
+        } catch (UnauthorizedException e) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to modify this post.");
+        }
+        return "redirect:/posts/manage";
     }
 
     @PreAuthorize("hasAuthority('RECRUITER')")

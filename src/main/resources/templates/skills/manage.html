@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>My Skills</title>
+</head>
+<body>
+<div layout:fragment="content" class="container mt-4">
+    <h2>Manage Your Skills</h2>
+
+    <div class="mb-4">
+        <h3>Your Current Skills</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Skill</th>
+                <th>Years of Experience</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="userSkill : ${userSkills}">
+                <td th:text="${userSkill.skill.description}"></td>
+                <td th:text="${userSkill.years}"></td>
+                <td>
+                    <form th:action="@{/skills/remove}" method="post" style="display: inline;">
+                        <input type="hidden" name="skillId" th:value="${userSkill.skill.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSkillModal">
+        Add New Skill
+    </button>
+
+    <div class="modal fade" id="addSkillModal" tabindex="-1" aria-labelledby="addSkillModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSkillModalLabel">Add New Skill</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/skills/add}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="skillDescription" class="form-label">Skill</label>
+                            <input type="text" class="form-control" id="skillDescription" name="skillDescription" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="years" class="form-label">Years of Experience</label>
+                            <input type="number" class="form-control" id="years" name="years" min="0" max="50" required/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Skill</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

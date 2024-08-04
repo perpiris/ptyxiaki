@@ -6,6 +6,7 @@ import org.iperp.Dtos.RegisterDto;
 import org.iperp.Enums.UserRole;
 import org.iperp.Services.IRegistrationService;
 import org.iperp.Utilities.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,11 +23,8 @@ import java.util.stream.Collectors;
 @Controller
 public class AuthController {
 
-    private final IRegistrationService registrationService;
-
-    public AuthController(final IRegistrationService registrationService) {
-        this.registrationService = registrationService;
-    }
+    @Autowired
+    private IRegistrationService registrationService;
 
     @ModelAttribute
     public void prepareContext(final Model model) {

@@ -46,6 +46,14 @@ public class Post {
     @CreationTimestamp
     private LocalDateTime createdOn;
 
+    @Builder.Default
+    @Column(name = "accepting_applications", nullable = false)
+    private boolean acceptingApplications = true;
+
+    @Builder.Default
+    @Column(name = "archived", nullable = false)
+    private boolean archived = false;
+
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
     private List<Application> applications = new ArrayList<>();
 

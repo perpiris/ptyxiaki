@@ -25,10 +25,37 @@
             font-size: 1rem;
             padding: 0.5rem 1rem;
         }
+        .skill-list {
+            padding: 0;
+            list-style-type: none;
+        }
+        .skill-chip {
+            display: inline-block;
+            padding: 0 12px;
+            height: 32px;
+            font-size: 13px;
+            line-height: 32px;
+            border-radius: 25px;
+            margin: 2px;
+        }
+        .skill-chip.bg-success,
+        .skill-chip.bg-warning,
+        .skill-chip.bg-danger,
+        .skill-chip.bg-info {
+            color: white;
+        }
+        .skill-chip.bg-warning {
+            color: #212529;
+        }
     </style>
 </head>
 <body>
 <div layout:fragment="content" class="container mt-4">
+
+    <div class="alert alert-warning" th:if="${post.archived}">
+        This job posting has been archived and is no longer active.
+    </div>
+
     <div class="job-detail-card p-4">
         <div class="d-flex justify-content-between align-items-start mb-4">
             <div>
@@ -38,10 +65,25 @@
                     <span class="badge bg-primary" th:text="${post.jobLocation.getDisplayName}"></span>
                 </div>
             </div>
-            <form th:action="@{/applications/apply}" method="post" sec:authorize="isAuthenticated()">
-                <input type="hidden" name="postId" th:value="${post.id}"/>
-                <button type="submit" class="btn btn-primary btn-lg">Apply Now</button>
-            </form>
+            <div sec:authorize="isAuthenticated()">
+
+                <div th:if="${userHasApplied}">
+                    <p class="text-success">You have already applied for this position.</p>
+                    <form th:action="@{/applications/withdraw}" method="post">
+                        <input type="hidden" name="postId" th:value="${post.id}"/>
+                        <button type="submit" class="btn btn-warning">Withdraw Application</button>
+                    </form>
+                </div>
+
+                <form th:if="${!userHasApplied and post.acceptingApplications}" th:action="@{/applications/apply}" method="post">
+                    <input type="hidden" name="postId" th:value="${post.id}"/>
+                    <button type="submit" class="btn btn-primary btn-lg">Apply Now</button>
+                </form>
+
+                <div th:if="${!post.acceptingApplications}" class="text-danger">
+                    This post is not currently accepting applications.
+                </div>
+            </div>
         </div>
 
         <div class="mb-4">
@@ -51,9 +93,18 @@
 
         <div class="mb-4">
             <h4>Required Skills</h4>
-            <ul class="list-unstyled">
-                <li th:each="skill : ${post.skills}" class="mb-2">
-                    <span class="skill-chip" th:text="${skill.years + ' years of ' + skill.description}"></span>
+            <ul class="skill-list">
+                <li th:each="skill : ${post.skills}" class="d-inline-block mb-2 me-2">
+                <span th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')},
+                               userSkillYears=${isAuthenticated ? userSkills.getOrDefault(skill.id, 0) : 0}"
+                      th:class="${'skill-chip ' +
+                                 (isAuthenticated
+                                  ? (userSkills.containsKey(skill.id)
+                                     ? (userSkillYears >= skill.years ? 'bg-success' : 'bg-warning')
+                                     : 'bg-danger')
+                                  : 'bg-info')}"
+                      th:text="${skill.years + ' years of ' + skill.description}">
+                </span>
                 </li>
             </ul>
         </div>

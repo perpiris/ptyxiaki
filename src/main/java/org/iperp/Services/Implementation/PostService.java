@@ -99,6 +99,7 @@ public class PostService implements IPostService {
         String username = SecurityUtility.getSessionUser();
         AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
         post.setCreatedBy(user);
+        post.setAcceptingApplications(true);
 
         post.setSkills(new ArrayList<>());
 
@@ -125,26 +126,50 @@ public class PostService implements IPostService {
             throw new UnauthorizedException("Only the creator can edit this post");
         }
 
-        mapToEntity(postDto, post);
-        post.getSkills().forEach(postSkill -> {
-            Skill skill = getOrCreateSkill(postSkill.getSkill().getDescription());
-            postSkill.setSkill(skill);
-        });
+        post.setTitle(postDto.getTitle());
+        post.setDescription(postDto.getDescription());
+        post.setJobType(postDto.getJobType());
+        post.setJobLocation(postDto.getJobLocation());
 
+        post.getSkills().clear();
+
+        postDto.getSkills().forEach(skillDto -> {
+            Skill skill = getOrCreateSkill(skillDto.getDescription());
+            PostSkill postSkill = PostSkill.builder()
+                    .post(post)
+                    .skill(skill)
+                    .years(skillDto.getYears())
+                    .build();
+            post.getSkills().add(postSkill);
+        });
 
         postRepository.save(post);
     }
 
     @Override
-    public void delete(final Long postId) {
-        final Post post = postRepository.findById(postId)
+    public void toggleAcceptingApplications(Long postId) throws NotFoundException, UnauthorizedException {
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("Post not found with ID: " + postId));
 
         if (!isOwner(postId)) {
-            throw new UnauthorizedException("Only the creator can delete this post");
+            throw new UnauthorizedException("Only the creator can modify this post");
         }
 
-        postRepository.delete(post);
+        post.setAcceptingApplications(!post.isAcceptingApplications());
+        postRepository.save(post);
+    }
+
+    @Override
+    public void toggleArchive(Long postId) throws NotFoundException, UnauthorizedException {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Post not found with ID: " + postId));
+
+        if (!isOwner(postId)) {
+            throw new UnauthorizedException("Only the creator can modify this post");
+        }
+
+        post.setArchived(!post.isArchived());
+        postRepository.save(post);
     }
 
     public boolean isOwner(Long postId) {
@@ -154,10 +179,14 @@ public class PostService implements IPostService {
     }
 
     private Skill getOrCreateSkill(String description) {
-        return skillRepository.findByDescriptionIgnoreCase(description.toUpperCase())
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Skill description cannot be null or empty");
+        }
+
+        return skillRepository.findByDescriptionIgnoreCase(description.trim().toUpperCase())
                 .orElseGet(() -> {
                     Skill newSkill = new Skill();
-                    newSkill.setDescription(description.toUpperCase());
+                    newSkill.setDescription(description.trim().toUpperCase());
                     return skillRepository.save(newSkill);
                 });
     }
@@ -172,6 +201,8 @@ public class PostService implements IPostService {
         postDto.setSkills(post.getSkills().stream()
                 .map(this::mapPostSkillToDto)
                 .collect(Collectors.toList()));
+        postDto.setAcceptingApplications(post.isAcceptingApplications());
+        postDto.setArchived(post.isArchived());
         return postDto;
     }
 
@@ -188,6 +219,8 @@ public class PostService implements IPostService {
         post.setDescription(postDto.getDescription());
         post.setJobType(postDto.getJobType());
         post.setJobLocation(postDto.getJobLocation());
+        post.setAcceptingApplications(postDto.isAcceptingApplications());
+        post.setArchived(postDto.isArchived());
 
         if (post.getSkills() == null) {
             post.setSkills(new ArrayList<>());

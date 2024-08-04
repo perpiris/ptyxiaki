@@ -18,8 +18,16 @@
             font-size: 13px;
             line-height: 32px;
             border-radius: 25px;
-            background-color: #f1f1f1;
             margin: 2px;
+        }
+        .skill-chip.bg-success,
+        .skill-chip.bg-warning,
+        .skill-chip.bg-danger,
+        .skill-chip.bg-info {
+            color: white;
+        }
+        .skill-chip.bg-warning {
+            color: #212529;
         }
     </style>
 </head>
@@ -90,8 +98,17 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <span th:each="skill : ${post.skills}" class="skill-chip"
-                                  th:text="${skill.description}"></span>
+                            <span th:each="skill : ${post.skills}"
+                                  th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')},
+                                           userSkillYears=${isAuthenticated ? userSkills.getOrDefault(skill.id, 0) : 0}"
+                                  th:class="${'skill-chip ' +
+                                             (isAuthenticated
+                                              ? (userSkills.containsKey(skill.id)
+                                                 ? (userSkillYears >= skill.years ? 'bg-success' : 'bg-warning')
+                                                 : 'bg-danger')
+                                              : 'bg-info')}"
+                                  th:text="${skill.years + ' years of ' + skill.description}">
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -20,20 +20,31 @@
             <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th><!-- --></th>
+                <th scope="col">Accepting Applications</th>
+                <th scope="col">Archived</th>
+                <th><!-- Actions --></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="post : ${posts}">
                 <td>[[${post.title}]]</td>
                 <td>
+                    <form th:action="@{/posts/toggle-applications/{id}(id=${post.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm" th:classappend="${post.acceptingApplications ? 'btn-success' : 'btn-secondary'}">
+                            [[${post.acceptingApplications ? 'On' : 'Off'}]]
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/posts/toggle-archive/{id}(id=${post.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm" th:classappend="${post.archived ? 'btn-warning' : 'btn-secondary'}">
+                            [[${post.archived ? 'Archived' : 'Active'}]]
+                        </button>
+                    </form>
+                </td>
+                <td>
                     <div class="float-end text-nowrap">
                         <a th:href="@{/posts/edit/{id}(id=${post.id})}" class="btn btn-sm btn-secondary">Edit</a>
-                        <form th:action="@{/posts/delete/{id}(id=${post.id})}"
-                              th:data-confirm-message="${'Are you sure you want to delete this post?'}" method="post"
-                              class="js-submit-confirm d-inline">
-                            <button type="submit" class="btn btn-sm btn-secondary">Delete</button>
-                        </form>
                     </div>
                 </td>
             </tr>

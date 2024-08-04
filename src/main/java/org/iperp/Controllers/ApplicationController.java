@@ -50,7 +50,7 @@ public class ApplicationController {
 
         try {
             applicationService.cancelApplication(applicationId);
-            redirectAttributes.addFlashAttribute("MSG_INFO", "Post deleted successfully.");
+            redirectAttributes.addFlashAttribute("MSG_INFO", "Application withdrawn successfully.");
 
             return "redirect:/application/manage";
         } catch (NotFoundException e) {

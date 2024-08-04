@@ -32,6 +32,10 @@ public class PostDto {
 
     private String createdOn;
 
+    private boolean acceptingApplications;
+
+    private boolean archived;
+
     private List<PostSkillDto> skills = new ArrayList<>();
 
 }

@@ -64,6 +64,12 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
+    public boolean hasUserAppliedToPost(Long postId) {
+        String username = SecurityUtility.getSessionUser();
+        return applicationRepository.existsByUserUsernameAndPostId(username, postId);
+    }
+
+    @Override
     public void cancelApplication(Long applicationId) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NotFoundException("Application not found with ID: " + applicationId));

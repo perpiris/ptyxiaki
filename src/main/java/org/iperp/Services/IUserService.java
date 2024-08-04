@@ -1,8 +1,8 @@
 package org.iperp.Services;
 
-import java.util.Set;
+import java.util.Map;
 
 public interface IUserService {
 
-    Set<Long>  getUserSkills(String username);
+    Map<Long, Integer> getUserSkills(String username);
 }
