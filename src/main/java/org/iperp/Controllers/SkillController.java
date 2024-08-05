@@ -40,9 +40,9 @@ public class SkillController {
     public String addSkill(@RequestParam String skillDescription, @RequestParam int years, RedirectAttributes redirectAttributes) {
         try {
             skillService.addSkillToUser(skillDescription, years);
-            redirectAttributes.addFlashAttribute("successMessage", "Skill added successfully");
+            redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Skill added successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error adding skill: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Error adding skill: " + e.getMessage());
         }
         return "redirect:/skills/manage";
     }
@@ -53,20 +53,20 @@ public class SkillController {
                             RedirectAttributes redirectAttributes) {
         try {
             skillService.updateUserSkillYears(userSkillId, years);
-            redirectAttributes.addFlashAttribute("successMessage", "Skill years updated successfully");
+            redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Skill years updated successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error updating skill years: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Error updating skill years: " + e.getMessage());
         }
         return "redirect:/skills/manage";
     }
 
     @PostMapping("/remove")
-    public String removeSkill(@RequestParam Long skillId, RedirectAttributes redirectAttributes) {
+    public String removeSkill(@RequestParam Long userSkillId, RedirectAttributes redirectAttributes) {
         try {
-            skillService.removeSkillFromUser(skillId);
-            redirectAttributes.addFlashAttribute("successMessage", "Skill removed successfully");
+            skillService.removeSkillFromUser(userSkillId);
+            redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Skill removed successfully");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error removing skill: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Error removing skill: " + e.getMessage());
         }
         return "redirect:/skills/manage";
     }

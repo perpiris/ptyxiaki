@@ -15,5 +15,5 @@ public interface ISkillService {
 
     void updateUserSkillYears(Long userSkillId, int years) throws Exception;
 
-    void removeSkillFromUser(Long skillId);
+    void removeSkillFromUser(Long userSkillId) throws Exception;
 }

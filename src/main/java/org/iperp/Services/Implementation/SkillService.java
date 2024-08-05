@@ -103,11 +103,26 @@ public class SkillService implements ISkillService {
         userSkill.setYears(years);
         userSkillRepository.save(userSkill);
     }
-
-    public void removeSkillFromUser(Long skillId) {
+    
+    public void removeSkillFromUser(Long userSkillId) throws Exception {
         String username = SecurityUtility.getSessionUser();
         AppUser user = userRepository.findByUsernameIgnoreCase(username);
-        user.getSkills().removeIf(userSkill -> userSkill.getSkill().getId().equals(skillId));
+        if (user == null) {
+            throw new Exception("User not found");
+        }
+        
+        boolean skillBelongsToUser = user.getSkills().stream()
+                .anyMatch(skill -> skill.getId().equals(userSkillId));
+        if (!skillBelongsToUser) {
+            throw new Exception("Unauthorized: This skill does not belong to the current user");
+        }
+        
+        List<UserSkill> updatedSkills = user.getSkills().stream()
+                .filter(skill -> !skill.getId().equals(userSkillId))
+                .toList();
+        
+        user.getSkills().clear();
+        user.getSkills().addAll(updatedSkills);
         userRepository.save(user);
     }
 

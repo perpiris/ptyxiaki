@@ -22,8 +22,13 @@
                 <td th:text="${userSkill.skill.description}"></td>
                 <td th:text="${userSkill.years}"></td>
                 <td>
+                    <button type="button" class="btn btn-primary btn-sm edit-skill"
+                            th:data-skill-id="${userSkill.id}"
+                            th:data-skill-years="${userSkill.years}">
+                        Edit
+                    </button>
                     <form th:action="@{/skills/remove}" method="post" style="display: inline;">
-                        <input type="hidden" name="skillId" th:value="${userSkill.skill.id}"/>
+                        <input type="hidden" name="userSkillId" th:value="${userSkill.id}"/>
                         <button type="submit" class="btn btn-danger btn-sm">Remove</button>
                     </form>
                 </td>
@@ -35,7 +40,7 @@
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSkillModal">
         Add New Skill
     </button>
-
+    
     <div class="modal" id="addSkillModal" tabindex="-1" aria-labelledby="addSkillModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -44,7 +49,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form th:action="@{/skills/add}" method="post">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="skillDescription" class="form-label">Skill</label>
@@ -54,7 +58,7 @@
                         <div class="mb-3">
                             <label for="years" class="form-label">Years of Experience</label>
                             <input type="number" class="form-control" id="years" name="years" min="0" max="50"
-                                   required/>
+                                   required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -65,7 +69,7 @@
             </div>
         </div>
     </div>
-
+    
     <div class="modal" id="editSkillModal" tabindex="-1" aria-labelledby="editSkillModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -89,6 +93,25 @@
             </div>
         </div>
     </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.edit-skill');
+            const editModal = new bootstrap.Modal(document.getElementById('editSkillModal'));
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const skillId = this.getAttribute('data-skill-id');
+                    const skillYears = this.getAttribute('data-skill-years');
+
+                    document.getElementById('editUserSkillId').value = skillId;
+                    document.getElementById('editYears').value = skillYears;
+
+                    editModal.show();
+                });
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
