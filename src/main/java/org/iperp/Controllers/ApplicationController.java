@@ -1,6 +1,7 @@
 package org.iperp.Controllers;
 
-import org.iperp.Dtos.ApplicationDto;
+import org.iperp.Dtos.UserApplicationDto;
+import org.iperp.Enums.ApplicationStatus;
 import org.iperp.Services.IApplicationService;
 import org.iperp.Utilities.NotFoundException;
 import org.springframework.data.domain.Page;
@@ -21,15 +22,16 @@ public class ApplicationController {
         this.applicationService = applicationService;
     }
 
-    @GetMapping("/manage")
-    public String manage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, final Model model) {
+    @PreAuthorize("hasAuthority('DEVELOPER')")
+    @GetMapping("/my-applications")
+    public String myApplications(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, final Model model) {
 
-        Page<ApplicationDto> applicationPage = applicationService.findAllForApplicant(page, size, sortBy);
+        Page<UserApplicationDto> applicationPage = applicationService.findAllForApplicant(page, size, sortBy);
         model.addAttribute("applications", applicationPage.getContent());
         model.addAttribute("currentPage", applicationPage.getNumber());
         model.addAttribute("totalPages", applicationPage.getTotalPages());
 
-        return "application/manage";
+        return "application/my-applications";
     }
 
     @PostMapping("/apply")
@@ -56,5 +58,19 @@ public class ApplicationController {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Application not found.");
             return "redirect:/application/manage";
         }
+    }
+
+    @PostMapping("/update-status")
+    public String updateApplicationStatus(@RequestParam Long applicationId,
+                                          @RequestParam Long postId,
+                                          @RequestParam ApplicationStatus status,
+                                          RedirectAttributes redirectAttributes) {
+        try {
+            applicationService.updateApplicationStatus(applicationId, status);
+            redirectAttributes.addFlashAttribute("message", "Application " + status.getDisplayName().toLowerCase() + " successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update application status: " + e.getMessage());
+        }
+        return "redirect:/posts/" + postId + "/applications";
     }
 }

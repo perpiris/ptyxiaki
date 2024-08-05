@@ -5,11 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApplicationDto {
-
+public class AppUserDto {
     private Long id;
-
-    private String postTitle;
-
-    private String status;
+    private String username;
+    private String email;
 }

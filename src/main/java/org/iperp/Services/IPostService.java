@@ -1,10 +1,13 @@
 package org.iperp.Services;
 
+import org.iperp.Dtos.PostApplicationDto;
 import org.iperp.Dtos.PostDto;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
 import org.iperp.Utilities.UnauthorizedException;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface IPostService {
     Page<PostDto> findAll(int pageNumber, int pageSize, String sortBy);
@@ -16,6 +19,8 @@ public interface IPostService {
     Page<PostDto> findByJobTypeAndJobLocation(JobType jobType, JobLocation jobLocation, int pageNumber, int pageSize, String sortBy);
 
     Page<PostDto> findAllForManager(int pageNumber, int pageSize, String sortBy);
+
+    List<PostApplicationDto>  getApplicationsWithSkillsForPost(Long postId);
 
     PostDto get(final Long postId);
 

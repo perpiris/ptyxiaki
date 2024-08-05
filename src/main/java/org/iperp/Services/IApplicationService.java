@@ -1,14 +1,19 @@
 package org.iperp.Services;
 
-import org.iperp.Dtos.ApplicationDto;
+import org.iperp.Dtos.UserApplicationDto;
+import org.iperp.Enums.ApplicationStatus;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface IApplicationService {
-    Page<ApplicationDto> findAllForApplicant(int pageNumber, int pageSize, String sortBy);
+    Page<UserApplicationDto> findAllForApplicant(int pageNumber, int pageSize, String sortBy);
 
     boolean hasUserAppliedToPost(Long postId);
 
     void applyToPost(Long postId);
 
     void cancelApplication(Long applicationId);
+
+    void updateApplicationStatus(Long applicationId, ApplicationStatus newStatus);
 }

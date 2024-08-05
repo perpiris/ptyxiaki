@@ -74,7 +74,6 @@
             <div sec:authorize="isAuthenticated()">
 
                 <div th:if="${userHasApplied}">
-                    <p class="text-success">You have already applied for this position.</p>
                     <form th:action="@{/applications/withdraw}" method="post">
                         <input type="hidden" name="postId" th:value="${post.id}"/>
                         <button type="submit" class="btn btn-warning">Withdraw Application</button>

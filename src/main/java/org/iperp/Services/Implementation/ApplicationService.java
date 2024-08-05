@@ -1,6 +1,6 @@
 package org.iperp.Services.Implementation;
 
-import org.iperp.Dtos.ApplicationDto;
+import org.iperp.Dtos.UserApplicationDto;
 import org.iperp.Entities.AppUser;
 import org.iperp.Entities.Application;
 import org.iperp.Entities.Post;
@@ -32,13 +32,13 @@ public class ApplicationService implements IApplicationService {
     }
 
     @Override
-    public Page<ApplicationDto> findAllForApplicant(int pageNumber, int pageSize, String sortBy) {
+    public Page<UserApplicationDto> findAllForApplicant(int pageNumber, int pageSize, String sortBy) {
         String username = SecurityUtility.getSessionUser();
         AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
         Page<Application> applications = applicationRepository.findAllByUser(user, pageable);
-        return applications.map(application -> mapToDto(application, new ApplicationDto()));
+        return applications.map(application -> mapToDto(application, new UserApplicationDto()));
     }
 
     public void applyToPost(Long postId) {
@@ -87,11 +87,30 @@ public class ApplicationService implements IApplicationService {
         applicationRepository.save(application);
     }
 
-    private ApplicationDto mapToDto(final Application application, final ApplicationDto applicationDto) {
-        applicationDto.setId(application.getId());
-        applicationDto.setPostTitle(application.getPost().getTitle());
-        applicationDto.setStatus(application.getStatus().getDisplayName());
-        return applicationDto;
+    @Override
+    public void updateApplicationStatus(Long applicationId, ApplicationStatus newStatus) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new NotFoundException("Application not found with ID: " + applicationId));
+
+        String username = SecurityUtility.getSessionUser();
+        AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
+
+        if (!application.getPost().getCreatedBy().getId().equals(user.getId())) {
+            throw new UnauthorizedException("You are not authorized to update this application's status");
+        }
+
+        if (application.getStatus() == ApplicationStatus.WITHDRAWN) {
+            throw new IllegalStateException("Cannot update status of a withdrawn application");
+        }
+
+        application.setStatus(newStatus);
+        applicationRepository.save(application);
     }
-    
+
+    private UserApplicationDto mapToDto(final Application application, final UserApplicationDto userApplicationDto) {
+        userApplicationDto.setId(application.getId());
+        userApplicationDto.setPostTitle(application.getPost().getTitle());
+        userApplicationDto.setStatus(application.getStatus().getDisplayName());
+        return userApplicationDto;
+    }
 }

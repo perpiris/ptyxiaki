@@ -1,14 +1,11 @@
 package org.iperp.Services.Implementation;
 
-import org.iperp.Dtos.PostDto;
-import org.iperp.Dtos.PostSkillDto;
-import org.iperp.Entities.AppUser;
-import org.iperp.Entities.Post;
-import org.iperp.Entities.PostSkill;
-import org.iperp.Entities.Skill;
+import org.iperp.Dtos.*;
+import org.iperp.Entities.*;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
 import org.iperp.Repositories.IAppUserRepository;
+import org.iperp.Repositories.IApplicationRepository;
 import org.iperp.Repositories.IPostRepository;
 import org.iperp.Repositories.ISkillRepository;
 import org.iperp.Security.SecurityUtility;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -33,13 +31,15 @@ public class PostService implements IPostService {
     private final IPostRepository postRepository;
     private final IAppUserRepository appUserRepository;
     private final ISkillRepository skillRepository;
+    private final IApplicationRepository applicationRepository;
 
     public PostService(final IPostRepository postRepository,
                        final IAppUserRepository appUserRepository,
-                       final ISkillRepository skillRepository) {
+                       final ISkillRepository skillRepository, IApplicationRepository applicationRepository) {
         this.postRepository = postRepository;
         this.appUserRepository = appUserRepository;
         this.skillRepository = skillRepository;
+        this.applicationRepository = applicationRepository;
     }
 
     public Page<PostDto> findAll(int pageNumber, int pageSize, String sortBy) {
@@ -173,6 +173,20 @@ public class PostService implements IPostService {
         postRepository.save(post);
     }
 
+    public List<PostApplicationDto> getApplicationsWithSkillsForPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Post not found with ID: " + postId));
+
+        if (!isOwner(postId)) {
+            throw new UnauthorizedException("Only the creator can view applications for this post");
+        }
+
+        List<Application> applications = applicationRepository.findByPostId(postId);
+        return applications.stream()
+                .map(application -> mapToApplicationDtoWithSkills(application, post))
+                .collect(Collectors.toList());
+    }
+
     public boolean isOwner(Long postId) {
         String username = SecurityUtility.getSessionUser();
         Optional<Post> postOptional = postRepository.findByIdAndCreatedByUsername(postId, username);
@@ -202,6 +216,7 @@ public class PostService implements IPostService {
         postDto.setSkills(post.getSkills().stream()
                 .map(this::mapPostSkillToDto)
                 .collect(Collectors.toList()));
+        postDto.setApplicationCount(post.getApplications().size());
         postDto.setAcceptingApplications(post.isAcceptingApplications());
         postDto.setArchived(post.isArchived());
         return postDto;
@@ -234,6 +249,36 @@ public class PostService implements IPostService {
             postSkill.setYears(skillDto.getYears());
             post.getSkills().add(postSkill);
         });
+    }
+
+    private PostApplicationDto mapToApplicationDtoWithSkills(Application application, Post post) {
+        PostApplicationDto dto = new PostApplicationDto();
+        dto.setId(application.getId());
+        dto.setStatus(application.getStatus());
+        dto.setCreatedOn(application.getCreatedOn());
+
+        AppUserDto userDto = new AppUserDto();
+        userDto.setId(application.getUser().getId());
+        userDto.setUsername(application.getUser().getUsername());
+        dto.setUser(userDto);
+
+        List<UserSkillDto> userSkillDtos = application.getUser().getSkills().stream()
+                .map(userSkill -> {
+                    UserSkillDto skillDto = new UserSkillDto();
+                    skillDto.setId(userSkill.getSkill().getId());
+                    skillDto.setDescription(userSkill.getSkill().getDescription());
+                    skillDto.setYears(userSkill.getYears());
+
+                    boolean isMatched = post.getSkills().stream()
+                            .anyMatch(postSkill -> postSkill.getSkill().getId().equals(userSkill.getSkill().getId()));
+                    skillDto.setMatched(isMatched);
+
+                    return skillDto;
+                })
+                .collect(Collectors.toList());
+        dto.setSkills(userSkillDtos);
+
+        return dto;
     }
 
     private String calculateRelativeTime(LocalDateTime createdDate) {

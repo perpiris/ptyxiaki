@@ -32,6 +32,8 @@ public class PostDto {
 
     private String createdOn;
 
+    private long applicationCount;
+
     private boolean acceptingApplications;
 
     private boolean archived;

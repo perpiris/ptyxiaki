@@ -15,4 +15,8 @@ public class UserSkillDto {
     @NotEmpty(message = "This field is required.")
     @Size(max = 255)
     private String description;
+
+    private Integer years;
+
+    private boolean matched;
 }

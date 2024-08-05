@@ -1,6 +1,7 @@
 package org.iperp.Controllers;
 
 import jakarta.validation.Valid;
+import org.iperp.Dtos.PostApplicationDto;
 import org.iperp.Dtos.PostDto;
 import org.iperp.Enums.JobLocation;
 import org.iperp.Enums.JobType;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/posts")
@@ -197,5 +199,17 @@ public class PostController {
         model.addAttribute("totalPages", postPage.getTotalPages());
 
         return "post/manage";
+    }
+
+    @PreAuthorize("hasAuthority('RECRUITER')")
+    @GetMapping("/{id}/applications")
+    public String viewApplications(@PathVariable Long id, Model model) {
+        List<PostApplicationDto> applications = postService.getApplicationsWithSkillsForPost(id);
+        PostDto post = postService.get(id);
+
+        model.addAttribute("applications", applications);
+        model.addAttribute("post", post);
+
+        return "post/applications";
     }
 }

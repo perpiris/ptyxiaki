@@ -22,12 +22,15 @@
                 <th scope="col">Title</th>
                 <th scope="col">Accepting Applications</th>
                 <th scope="col">Archived</th>
-                <th><!-- Actions --></th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="post : ${posts}">
-                <td>[[${post.title}]]</td>
+                <td>
+                    [[${post.title}]]
+                    <span class="badge bg-info ms-2" th:text="${post.applicationCount + ' application(s)'}"></span>
+                </td>
                 <td>
                     <form th:action="@{/posts/toggle-applications/{id}(id=${post.id})}" method="post" class="d-inline">
                         <button type="submit" class="btn btn-sm"
@@ -47,6 +50,7 @@
                 <td>
                     <div class="float-end text-nowrap">
                         <a th:href="@{/posts/edit/{id}(id=${post.id})}" class="btn btn-sm btn-secondary">Edit</a>
+                        <a th:href="@{/posts/{id}/applications(id=${post.id})}" class="btn btn-sm btn-primary">View Applications</a>
                     </div>
                 </td>
             </tr>
