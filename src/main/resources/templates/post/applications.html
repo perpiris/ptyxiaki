@@ -30,7 +30,13 @@
 </head>
 <body>
 <div layout:fragment="content" class="mt-4">
-    <h1 th:text="${'Applications for ' + post.title}"></h1>
+
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1" th:text="${'Applications for ' + post.title}"></h1>
+        <div>
+            <a class="btn btn-secondary" th:href="@{/posts/manage}">Back</a>
+        </div>
+    </div>
 
     <div class="accordion" id="applicationsAccordion">
         <div class="accordion-item" th:each="jobApplication, appStat : ${applications}">

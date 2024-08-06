@@ -26,7 +26,7 @@
                 <td>[[${postApplication.postTitle}]]</td>
                 <td>[[${postApplication.status}]]</td>
                 <td>
-                    <div class="float-end text-nowrap" th:unless="${postApplication.status == 'Withdrawn'}">
+                    <div class="float-end text-nowrap" th:unless="${postApplication.status == 'Withdrawn' || postApplication.status == 'Rejected'}">
                         <form th:action="@{/applications/cancel/{id}(id=${postApplication.id})}"
                               th:data-confirm-message="${'Are you sure you want to withdraw your application?'}"
                               method="post"

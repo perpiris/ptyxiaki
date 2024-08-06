@@ -34,6 +34,7 @@ public class ApplicationController {
         return "application/my-applications";
     }
 
+    @PreAuthorize("hasAuthority('DEVELOPER')")
     @PostMapping("/apply")
     public String applyToPost(@RequestParam Long postId, RedirectAttributes redirectAttributes) {
 
@@ -47,6 +48,7 @@ public class ApplicationController {
         return "redirect:/posts/details/" + postId;
     }
 
+    @PreAuthorize("hasAuthority('DEVELOPER')")
     @PostMapping("/cancel/{id}")
     public String cancel(@PathVariable(name = "id") Long applicationId, RedirectAttributes redirectAttributes) {
 
@@ -54,10 +56,10 @@ public class ApplicationController {
             applicationService.cancelApplication(applicationId);
             redirectAttributes.addFlashAttribute("MSG_INFO", "Application withdrawn successfully.");
 
-            return "redirect:/application/manage";
+            return "redirect:/applications/my-applications";
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Application not found.");
-            return "redirect:/application/manage";
+            return "redirect:/applications/my-applications";
         }
     }
 

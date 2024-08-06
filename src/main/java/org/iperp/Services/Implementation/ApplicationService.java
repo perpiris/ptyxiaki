@@ -54,7 +54,9 @@ public class ApplicationService implements IApplicationService {
             throw new IllegalArgumentException("This post no longer accepts applications.");
         }
 
-        boolean hasApplied = post.getApplications().stream().anyMatch(application -> application.getUser().getId().equals(user.getId()));
+        boolean hasApplied = post.getApplications().stream().anyMatch(application -> 
+                application.getUser().getId().equals(user.getId()) && 
+                        !application.getStatus().equals(ApplicationStatus.WITHDRAWN));
         if (hasApplied) {
             throw new IllegalArgumentException("You have already applied to this post.");
         }
@@ -67,7 +69,12 @@ public class ApplicationService implements IApplicationService {
     @Override
     public boolean hasUserAppliedToPost(Long postId) {
         String username = SecurityUtility.getSessionUser();
-        return applicationRepository.existsByUserUsernameAndPostId(username, postId);
+        var application = applicationRepository.findByUserUsernameAndPostIdAndStatusNot(username, postId, ApplicationStatus.WITHDRAWN);
+        if (application == null) {
+            return false;
+        }
+        
+        return !application.getStatus().equals(ApplicationStatus.WITHDRAWN);
     }
 
     @Override

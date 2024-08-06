@@ -6,7 +6,16 @@
 </head>
 <body>
 <div layout:fragment="content" class="mt-4">
-    <h2>Manage Your Skills</h2>
+    <h2></h2>
+
+    <div class="d-flex flex-wrap mb-4">
+        <h1 class="flex-grow-1">Manage Your Skills</h1>
+        <div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSkillModal">
+                Add New Skill
+            </button>
+        </div>
+    </div>
 
     <div class="mb-4">
         <table class="table">
@@ -36,10 +45,6 @@
             </tbody>
         </table>
     </div>
-
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSkillModal">
-        Add New Skill
-    </button>
     
     <div class="modal" id="addSkillModal" tabindex="-1" aria-labelledby="addSkillModalLabel" aria-hidden="true">
         <div class="modal-dialog">

@@ -74,10 +74,9 @@
             <div sec:authorize="isAuthenticated()">
 
                 <div th:if="${userHasApplied}">
-                    <form th:action="@{/applications/withdraw}" method="post">
-                        <input type="hidden" name="postId" th:value="${post.id}"/>
-                        <button type="submit" class="btn btn-warning">Withdraw Application</button>
-                    </form>
+                    <div th:if="${post.acceptingApplications}" class="text-info">
+                        You have already applied to this post.
+                    </div>
                 </div>
 
                 <form th:if="${!userHasApplied and post.acceptingApplications}" th:action="@{/applications/apply}"
