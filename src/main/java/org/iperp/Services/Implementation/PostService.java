@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,6 +73,33 @@ public class PostService implements IPostService {
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
         Page<Post> postPage = postRepository.findByJobTypeAndJobLocationAndArchivedFalse(jobType, jobLocation, pageable);
+        return postPage.map(post -> mapToDto(post, new PostDto()));
+    }
+
+    @Override
+    public Page<PostDto> findMatchingUserSkills(String username, JobType jobType, JobLocation jobLocation, int pageNumber, int pageSize, String sortBy) {
+        AppUser user = appUserRepository.findByUsernameIgnoreCase(username);
+        if (user == null) {
+            throw new NotFoundException("User not found");
+        }
+
+        Set<Long> userSkillIds = user.getSkills().stream()
+                .map(userSkill -> userSkill.getSkill().getId())
+                .collect(Collectors.toSet());
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
+        Page<Post> postPage;
+
+        if (jobType != null && jobLocation != null) {
+            postPage = postRepository.findByJobTypeAndJobLocationAndSkillsSkillIdInAndArchivedFalse(jobType, jobLocation, userSkillIds, pageable);
+        } else if (jobType != null) {
+            postPage = postRepository.findByJobTypeAndSkillsSkillIdInAndArchivedFalse(jobType, userSkillIds, pageable);
+        } else if (jobLocation != null) {
+            postPage = postRepository.findByJobLocationAndSkillsSkillIdInAndArchivedFalse(jobLocation, userSkillIds, pageable);
+        } else {
+            postPage = postRepository.findBySkillsSkillIdInAndArchivedFalse(userSkillIds, pageable);
+        }
+
         return postPage.map(post -> mapToDto(post, new PostDto()));
     }
 

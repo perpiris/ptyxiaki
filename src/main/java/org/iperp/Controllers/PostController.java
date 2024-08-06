@@ -45,13 +45,18 @@ public class PostController {
     }
 
     @GetMapping("/list")
-    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, @RequestParam(required = false) JobType jobType, @RequestParam(required = false) JobLocation jobLocation, final Model model, Principal principal) {
+    public String list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, 
+                       @RequestParam(defaultValue = "id") String sortBy, @RequestParam(required = false) JobType jobType,
+                       @RequestParam(required = false) Boolean matchMySkills, 
+                       @RequestParam(required = false) JobLocation jobLocation, final Model model, Principal principal) {
 
         model.addAttribute("selectedJobType", null);
         model.addAttribute("selectedJobLocation", null);
 
         Page<PostDto> postPage;
-        if (jobType != null && jobLocation != null) {
+        if (matchMySkills != null && matchMySkills && principal != null) {
+            postPage = postService.findMatchingUserSkills(principal.getName(), jobType, jobLocation, page, size, sortBy);
+        } else if (jobType != null && jobLocation != null) {
             postPage = postService.findByJobTypeAndJobLocation(jobType, jobLocation, page, size, sortBy);
         } else if (jobType != null) {
             postPage = postService.findByJobType(jobType, page, size, sortBy);
@@ -75,6 +80,7 @@ public class PostController {
             model.addAttribute("userSkills", java.util.Collections.emptySet());
         }
 
+        model.addAttribute("matchMySkills", matchMySkills);
         model.addAttribute("posts", postPage.getContent());
         model.addAttribute("currentPage", postPage.getNumber());
         model.addAttribute("totalPages", postPage.getTotalPages());

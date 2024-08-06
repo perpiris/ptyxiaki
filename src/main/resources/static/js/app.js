@@ -15,9 +15,10 @@ handleEvent('submit', '.js-submit-confirm', function(event) {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    var filterForm = document.getElementById('filterForm');
-    var jobTypeFilters = document.querySelectorAll('.jobTypeFilter');
-    var jobLocationFilters = document.querySelectorAll('.jobLocationFilter');
+    let filterForm = document.getElementById('filterForm');
+    let jobTypeFilters = document.querySelectorAll('.jobTypeFilter');
+    let jobLocationFilters = document.querySelectorAll('.jobLocationFilter');
+    let matchMySkillsCheckbox = document.getElementById('matchMySkills');
 
     function applyFilters() {
         filterForm.submit();
@@ -30,4 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
     jobLocationFilters.forEach(function(filter) {
         filter.addEventListener('change', applyFilters);
     });
+
+    if (matchMySkillsCheckbox) {
+        matchMySkillsCheckbox.addEventListener('change', applyFilters);
+    }
 });

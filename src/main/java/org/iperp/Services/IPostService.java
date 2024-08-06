@@ -19,6 +19,8 @@ public interface IPostService {
 
     Page<PostDto> findAllForManager(int pageNumber, int pageSize, String sortBy);
 
+    Page<PostDto> findMatchingUserSkills(String username, JobType jobType, JobLocation jobLocation, int pageNumber, int pageSize, String sortBy);
+
     List<PostApplicationDto>  getApplicationsWithSkillsForPost(Long postId);
 
     PostDto get(final Long postId);

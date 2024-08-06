@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IPostRepository extends JpaRepository<Post, Long> {
 
@@ -31,4 +32,12 @@ public interface IPostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByJobLocationAndArchivedFalse(JobLocation jobLocation, Pageable pageable);
 
     Page<Post> findByJobTypeAndJobLocationAndArchivedFalse(JobType jobType, JobLocation jobLocation, Pageable pageable);
+
+    Page<Post> findBySkillsSkillIdInAndArchivedFalse(Set<Long> skillIds, Pageable pageable);
+    
+    Page<Post> findByJobTypeAndSkillsSkillIdInAndArchivedFalse(JobType jobType, Set<Long> skillIds, Pageable pageable);
+    
+    Page<Post> findByJobLocationAndSkillsSkillIdInAndArchivedFalse(JobLocation jobLocation, Set<Long> skillIds, Pageable pageable);
+    
+    Page<Post> findByJobTypeAndJobLocationAndSkillsSkillIdInAndArchivedFalse(JobType jobType, JobLocation jobLocation, Set<Long> skillIds, Pageable pageable);
 }
