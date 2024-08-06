@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 public class LoginDto {
@@ -17,5 +16,4 @@ public class LoginDto {
     @NotEmpty(message = "This field is required.")
     @Size(max = 255)
     private String password;
-
 }

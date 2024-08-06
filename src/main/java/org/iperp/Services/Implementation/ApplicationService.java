@@ -60,9 +60,7 @@ public class ApplicationService implements IApplicationService {
         }
 
         Application application = Application.builder().user(user).post(post).build();
-
         application.setStatus(ApplicationStatus.PENDING);
-
         applicationRepository.save(application);
     }
 

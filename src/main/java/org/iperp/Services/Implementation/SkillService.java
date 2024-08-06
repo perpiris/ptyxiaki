@@ -54,7 +54,7 @@ public class SkillService implements ISkillService {
         if (user.getSkills() == null) {
             user.setSkills(new ArrayList<>());
         }
-        
+
         boolean userHasSkill = user.getSkills().stream()
                 .anyMatch(us -> us.getSkill().getDescription().equalsIgnoreCase(skillDescription.trim().toUpperCase()));
 
@@ -103,24 +103,24 @@ public class SkillService implements ISkillService {
         userSkill.setYears(years);
         userSkillRepository.save(userSkill);
     }
-    
+
     public void removeSkillFromUser(Long userSkillId) throws Exception {
         String username = SecurityUtility.getSessionUser();
         AppUser user = userRepository.findByUsernameIgnoreCase(username);
         if (user == null) {
             throw new Exception("User not found");
         }
-        
+
         boolean skillBelongsToUser = user.getSkills().stream()
                 .anyMatch(skill -> skill.getId().equals(userSkillId));
         if (!skillBelongsToUser) {
             throw new Exception("Unauthorized: This skill does not belong to the current user");
         }
-        
+
         List<UserSkill> updatedSkills = user.getSkills().stream()
                 .filter(skill -> !skill.getId().equals(userSkillId))
                 .toList();
-        
+
         user.getSkills().clear();
         user.getSkills().addAll(updatedSkills);
         userRepository.save(user);

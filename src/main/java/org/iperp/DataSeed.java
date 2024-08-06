@@ -2,7 +2,6 @@ package org.iperp;
 
 import org.iperp.Entities.AppRole;
 import org.iperp.Repositories.IAppRoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -11,8 +10,11 @@ import java.util.List;
 @Component
 public class DataSeed implements CommandLineRunner {
 
-    @Autowired
-    private IAppRoleRepository appRoleRepository;
+    private final IAppRoleRepository appRoleRepository;
+
+    public DataSeed(IAppRoleRepository appRoleRepository) {
+        this.appRoleRepository = appRoleRepository;
+    }
 
     @Override
     public void run(String... args) throws Exception {

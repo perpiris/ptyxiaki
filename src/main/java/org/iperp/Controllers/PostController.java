@@ -84,6 +84,7 @@ public class PostController {
 
     @GetMapping("/details/{id}")
     public String details(@PathVariable("id") long postId, Model model, Principal principal) {
+        
         PostDto post = postService.get(postId);
         model.addAttribute("post", post);
         model.addAttribute("userHasApplied", applicationService.hasUserAppliedToPost(postId));
@@ -123,9 +124,10 @@ public class PostController {
     @PreAuthorize("hasAuthority('RECRUITER')")
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable(name = "id") Long postId, Model model, RedirectAttributes redirectAttributes) {
+        
         var isOwner = postService.isOwner(postId);
         if (!isOwner) {
-            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to edit this post.");
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "You are not authorized to edit this post.");
             return "redirect:/posts/manage";
         }
 
@@ -141,7 +143,6 @@ public class PostController {
     public String edit(@PathVariable(name = "id") Long postId, @ModelAttribute("post") @Valid PostDto postDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
 
         if (bindingResult.hasErrors()) {
-            // Add the skills back to the model
             model.addAttribute("skills", postDto.getSkills());
             model.addAttribute("allSkills", skillService.getAllSkills());
             return "post/edit";
@@ -156,7 +157,7 @@ public class PostController {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
             return "redirect:/posts/manage";
         } catch (UnauthorizedException e) {
-            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to edit this post.");
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "You are not authorized to edit this post.");
             return "redirect:/posts/manage";
         }
     }
@@ -164,28 +165,32 @@ public class PostController {
     @PreAuthorize("hasAuthority('RECRUITER')")
     @PostMapping("/toggle-applications/{id}")
     public String toggleAcceptingApplications(@PathVariable(name = "id") Long postId, RedirectAttributes redirectAttributes) {
+        
         try {
             postService.toggleAcceptingApplications(postId);
             redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post application status updated successfully.");
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
         } catch (UnauthorizedException e) {
-            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to modify this post.");
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "You are not authorized to modify this post.");
         }
+        
         return "redirect:/posts/manage";
     }
 
     @PreAuthorize("hasAuthority('RECRUITER')")
     @PostMapping("/toggle-archive/{id}")
     public String toggleArchive(@PathVariable(name = "id") Long postId, RedirectAttributes redirectAttributes) {
+        
         try {
             postService.toggleArchive(postId);
             redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Post archive status updated successfully.");
         } catch (NotFoundException e) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
         } catch (UnauthorizedException e) {
-            redirectAttributes.addFlashAttribute("MSG_ERROR", "Unauthorized: You are not authorized to modify this post.");
+            redirectAttributes.addFlashAttribute("MSG_ERROR", " You are not authorized to modify this post.");
         }
+        
         return "redirect:/posts/manage";
     }
 
@@ -203,13 +208,19 @@ public class PostController {
 
     @PreAuthorize("hasAuthority('RECRUITER')")
     @GetMapping("/{id}/applications")
-    public String viewApplications(@PathVariable Long id, Model model) {
+    public String viewApplications(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        
         List<PostApplicationDto> applications = postService.getApplicationsWithSkillsForPost(id);
-        PostDto post = postService.get(id);
+        try {
+            PostDto post = postService.get(id);
 
-        model.addAttribute("applications", applications);
-        model.addAttribute("post", post);
+            model.addAttribute("applications", applications);
+            model.addAttribute("post", post);
 
-        return "post/applications";
+            return "post/applications";
+        }catch (NotFoundException e) {
+            redirectAttributes.addFlashAttribute("MSG_ERROR", "Post not found.");
+            return "redirect:/posts/manage";
+        }
     }
 }

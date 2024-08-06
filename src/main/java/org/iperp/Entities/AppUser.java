@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Getter
 @Setter
 @Entity
@@ -25,10 +24,16 @@ public class AppUser {
     private String username;
 
     @Column(nullable = false)
-    private String hash;
+    private String name;
+
+    @Column(nullable = false)
+    private String surname;
 
     @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
+    private String hash;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

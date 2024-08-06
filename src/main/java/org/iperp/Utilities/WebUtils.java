@@ -8,7 +8,6 @@ import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.Objects;
 
-
 @Component
 public class WebUtils {
 
@@ -24,7 +23,6 @@ public class WebUtils {
     public static HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
     }
-
 }
 
 

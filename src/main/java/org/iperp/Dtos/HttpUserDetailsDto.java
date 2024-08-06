@@ -14,5 +14,4 @@ public class HttpUserDetailsDto extends User {
         super(username, hash, authorities);
         this.id = id;
     }
-
 }

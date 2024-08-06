@@ -31,10 +31,11 @@ public class RegistrationService implements IRegistrationService {
     }
 
     public void register(final RegisterDto registerDto) {
-        log.info("registering new user: {}", registerDto.getUsername());
 
         final AppUser appUser = new AppUser();
         appUser.setUsername(registerDto.getUsername());
+        appUser.setName(registerDto.getName());
+        appUser.setSurname(registerDto.getSurname());
         appUser.setHash(passwordEncoder.encode(registerDto.getPassword()));
         appUser.setEmail(registerDto.getEmail());
         Set<AppRole> roles = new HashSet<>();
@@ -52,5 +53,4 @@ public class RegistrationService implements IRegistrationService {
     public boolean usernameExists(final String username) {
         return appUserRepository.existsByUsernameIgnoreCase(username);
     }
-
 }

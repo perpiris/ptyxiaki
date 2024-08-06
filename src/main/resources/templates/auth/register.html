@@ -3,18 +3,65 @@
       layout:decorate="~{layout}">
 <head>
     <title>Register</title>
+    <style>
+        .register-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .register-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-row {
+            margin-bottom: 20px;
+        }
+        .register-button {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+        }
+    </style>
 </head>
 <body>
-<div layout:fragment="content">
-    <h1 class="mb-4">Register</h1>
-    <div th:replace="~{fragments/forms::globalErrors('registerDto')}"/>
-    <form th:action="${requestUri}" method="post">
-        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='username', required=true, label='Username')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='password', required=true, type='password', label='Password')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='email', required=true, label='Email')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='role', required=true, type='radio', label='I am a')}"/>
-        <input type="submit" th:value="Register" class="btn btn-primary mt-4"/>
-    </form>
+<div layout:fragment="content" class="mt-4">
+    <div class="register-container">
+        <h1 class="register-title">Create Your Account</h1>
+        <div th:replace="~{fragments/forms::globalErrors('registerDto')}"/>
+        <form th:action="${requestUri}" method="post">
+            <div class="row form-row">
+                <div class="col-md-6">
+                    <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='name', required=true, label='First Name')}"/>
+                </div>
+                <div class="col-md-6">
+                    <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='surname', required=true, label='Last Name')}"/>
+                </div>
+            </div>
+
+            <div class="row form-row">
+                <div class="col-md-6">
+                    <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='username', required=true, label='Username')}"/>
+                </div>
+                <div class="col-md-6">
+                    <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='email', required=true, label='Email')}"/>
+                </div>
+            </div>
+
+            <div class="row form-row">
+                <div class="col-md-6">
+                    <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='password', required=true, type='password', label='Create Password')}"/>
+                </div>
+                <div class="col-md-6">
+                    <div th:replace="~{fragments/forms::inputRow(object='registerDto', field='role', required=true, type='radio', label='I am registering as a')}"/>
+                </div>
+            </div>
+
+            <input type="submit" th:value="Register" class="btn btn-primary mt-4 register-button"/>
+        </form>
+    </div>
 </div>
 </body>
 </html>

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
+    
     private final IAppUserRepository appUserRepository;
 
     @Autowired

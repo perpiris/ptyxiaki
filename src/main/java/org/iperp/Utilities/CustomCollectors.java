@@ -6,7 +6,6 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-
 public class CustomCollectors {
 
     public static <T, K, U> Collector<T, ?, Map<K, U>> toSortedMap(
@@ -19,5 +18,4 @@ public class CustomCollectors {
                 },
                 LinkedHashMap::new);
     }
-
 }

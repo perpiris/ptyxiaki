@@ -3,19 +3,44 @@
       layout:decorate="~{layout}">
 <head>
     <title>Login</title>
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .login-title {
+            text-align: center;
+        }
+        .login-form {
+            margin-top: 20px;
+        }
+        .login-button {
+            width: 100%;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<div layout:fragment="content">
-    <h1 class="mb-4">Login</h1>
-    <div th:replace="~{fragments/forms::globalErrors('authentication')}"/>
-    <form th:action="${requestUri}" method="post">
-        <div th:replace="~{fragments/forms::inputRow(object='authentication', field='username', required=true, label='Username')}"/>
-        <div th:replace="~{fragments/forms::inputRow(object='authentication', field='password', required=true, type='password', label='Password')}"/>
-        <input type="submit" th:value="Login" class="btn btn-primary mt-4"/>
-    </form>
-    <p class="mt-5">
-        <a th:href="@{/register}">Click here if you don't have an account.</a>
-    </p>
+<div layout:fragment="content" class="mt-4">
+    <div class="login-container">
+        <h1 class="login-title mb-4">Login</h1>
+        <div th:replace="~{fragments/forms::globalErrors('authentication')}"/>
+        <form th:action="${requestUri}" method="post" class="login-form">
+            <div th:replace="~{fragments/forms::inputRow(object='authentication', field='username', required=true, label='Username')}"/>
+            <div th:replace="~{fragments/forms::inputRow(object='authentication', field='password', required=true, type='password', label='Password')}"/>
+            <input type="submit" th:value="Login" class="btn btn-primary mt-4 login-button"/>
+        </form>
+        <p class="register-link">
+            <a th:href="@{/register}">Don't have an account? Register here</a>
+        </p>
+    </div>
 </div>
 </body>
 </html>

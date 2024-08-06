@@ -11,5 +11,4 @@ public class WebAdvice {
     public String getRequestUri(final HttpServletRequest request) {
         return request.getRequestURI();
     }
-
 }

@@ -3,7 +3,7 @@
 <body>
 <div th:fragment="inputRow(object, field, label)" th:with="type=${type} ?: 'text', required=${required}, disabled=${disabled},
                 inputClassappend=${#fields.hasErrors(field) || (type == 'textarea' && #fields.hasErrors(field + '.*')) ? 'is-invalid ' : ''} + ${inputClass ?: ''}"
-     th:object="${__${object}__}" class="row mb-3">
+     th:object="${__${object}__}" class="mb-3">
     <div th:if="${type == 'checkbox'}" class="col-md-10 offset-md-2">
         <div class="form-check">
             <input th:type="${type}" th:field="*{__${field}__}" th:disabled="${disabled}"
@@ -14,10 +14,10 @@
         </div>
         <div th:replace="~{:: fieldErrors(${object}, ${field})}"/>
     </div>
-    <label th:if="${type != 'checkbox'}" th:for="${field}" class="col-md-2 col-form-label">
-        <span>[[${label}]]</span>
-    </label>
-    <div th:if="${type != 'checkbox'}" class="col-md-10">
+    <div th:if="${type != 'checkbox'}" class="col-md-12">
+        <label th:if="${type != 'radio'}" th:for="${field}" class="form-label">
+            <span>[[${label}]]</span>
+        </label>
         <input th:if="${type == 'text' || type == 'password' || type == 'email' || type == 'tel' || type == 'number'}"
                th:type="${type}" th:field="*{__${field}__}" th:disabled="${disabled}"
                th:classappend="${inputClassappend}" class="form-control"/>
@@ -39,11 +39,22 @@
                    th:classappend="${inputClassappend}" type="radio" class="form-check-input"/>
             <label class="form-check-label">[[${radioValue.displayName}]]</label>
         </div>
-        <div th:if="${type == 'radio'}" th:each="radioValue : ${__${field}__Values}"
-             class="form-check form-check-inline pt-2">
-            <input th:field="*{__${field}__}" th:value="${radioValue}" th:disabled="${disabled}"
-                   th:classappend="${inputClassappend}" type="radio" class="form-check-input"/>
-            <label th:for="${#ids.prev(field)}" class="form-check-label">[[${radioValue.displayName}]]</label>
+        <div th:if="${type == 'radio'}" class="col-md-12">
+            <label th:for="${field}" class="form-label">
+                <span>[[${label}]]</span>
+            </label>
+            <div class="d-flex align-items-center" style="min-height: 38px;">  <!-- Added align-items-center and min-height -->
+                <div th:if="${required != true}" class="form-check form-check-inline me-3 mb-0">  <!-- Added mb-0 -->
+                    <input value="" th:checked="*{__${field}__} == null" th:name="${field}" th:disabled="${disabled}"
+                           th:classappend="${inputClassappend}" type="radio" class="form-check-input"/>
+                    <label class="form-check-label">None</label>
+                </div>
+                <div th:each="radioValue : ${__${field}__Values}" class="form-check form-check-inline me-3 mb-0">  <!-- Added mb-0 -->
+                    <input th:field="*{__${field}__}" th:value="${radioValue}" th:disabled="${disabled}"
+                           th:classappend="${inputClassappend}" type="radio" class="form-check-input"/>
+                    <label th:for="${#ids.prev(field)}" class="form-check-label">[[${radioValue.displayName}]]</label>
+                </div>
+            </div>
         </div>
         <div th:replace="~{:: fieldErrors(${object}, ${field})}"/>
     </div>

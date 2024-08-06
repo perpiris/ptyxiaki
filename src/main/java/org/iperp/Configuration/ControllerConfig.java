@@ -24,5 +24,4 @@ public class ControllerConfig {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("You are not authorized to access this resource.");
     }
-
 }

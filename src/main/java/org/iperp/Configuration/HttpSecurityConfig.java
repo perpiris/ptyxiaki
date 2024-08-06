@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
-
 @Configuration
 @EnableMethodSecurity()
 public class HttpSecurityConfig {
@@ -48,5 +47,4 @@ public class HttpSecurityConfig {
                         }))
                 .build();
     }
-
 }

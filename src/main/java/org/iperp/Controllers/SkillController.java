@@ -27,6 +27,7 @@ public class SkillController {
 
     @GetMapping("/manage")
     public String manage(Model model) {
+
         List<UserSkill> userSkills = skillService.getUserSkills();
         List<SkillDto> allSkills = skillService.getAllSkills();
 
@@ -38,36 +39,40 @@ public class SkillController {
 
     @PostMapping("/add")
     public String addSkill(@RequestParam String skillDescription, @RequestParam int years, RedirectAttributes redirectAttributes) {
+
         try {
             skillService.addSkillToUser(skillDescription, years);
             redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Skill added successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Error adding skill: " + e.getMessage());
         }
+
         return "redirect:/skills/manage";
     }
 
     @PostMapping("/edit")
-    public String editSkill(@RequestParam Long userSkillId,
-                            @RequestParam int years,
-                            RedirectAttributes redirectAttributes) {
+    public String editSkill(@RequestParam Long userSkillId, @RequestParam int years, RedirectAttributes redirectAttributes) {
+        
         try {
             skillService.updateUserSkillYears(userSkillId, years);
             redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Skill years updated successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Error updating skill years: " + e.getMessage());
         }
+        
         return "redirect:/skills/manage";
     }
 
     @PostMapping("/remove")
     public String removeSkill(@RequestParam Long userSkillId, RedirectAttributes redirectAttributes) {
+        
         try {
             skillService.removeSkillFromUser(userSkillId);
             redirectAttributes.addFlashAttribute("MSG_SUCCESS", "Skill removed successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("MSG_ERROR", "Error removing skill: " + e.getMessage());
         }
+        
         return "redirect:/skills/manage";
     }
 }

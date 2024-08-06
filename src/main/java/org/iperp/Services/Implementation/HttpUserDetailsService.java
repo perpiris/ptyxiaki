@@ -35,5 +35,4 @@ public class HttpUserDetailsService implements UserDetailsService {
                 .collect(Collectors.toList());
         return new HttpUserDetailsDto(appUser.getId(), username, appUser.getHash(), authorities);
     }
-
 }

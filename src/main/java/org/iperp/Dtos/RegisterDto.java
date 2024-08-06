@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.iperp.Enums.UserRole;
 import org.iperp.Utilities.UniqueUserName;
 
-
 @Getter
 @Setter
 public class RegisterDto {
@@ -20,13 +19,20 @@ public class RegisterDto {
 
     @NotEmpty(message = "This field is required.")
     @Size(max = 255)
-    private String password;
+    private String email;
 
     @NotEmpty(message = "This field is required.")
     @Size(max = 255)
-    private String email;
+    private String name;
+
+    @NotEmpty(message = "This field is required.")
+    @Size(max = 255)
+    private String surname;
+
+    @NotEmpty(message = "This field is required.")
+    @Size(max = 255)
+    private String password;
 
     @NotNull(message = "This field is required.")
     private UserRole role;
-
 }

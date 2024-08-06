@@ -53,7 +53,7 @@ public class PostService implements IPostService {
             return findAll(pageNumber, pageSize, sortBy);
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-        Page<Post> postPage = postRepository.findByJobType(jobType, pageable);
+        Page<Post> postPage = postRepository.findByJobTypeAndArchivedFalse(jobType, pageable);
         return postPage.map(post -> mapToDto(post, new PostDto()));
     }
 
@@ -62,7 +62,7 @@ public class PostService implements IPostService {
             return findAll(pageNumber, pageSize, sortBy);
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-        Page<Post> postPage = postRepository.findByJobLocation(jobLocation, pageable);
+        Page<Post> postPage = postRepository.findByJobLocationAndArchivedFalse(jobLocation, pageable);
         return postPage.map(post -> mapToDto(post, new PostDto()));
     }
 
@@ -71,7 +71,7 @@ public class PostService implements IPostService {
             return findAll(pageNumber, pageSize, sortBy);
         }
         Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy).ascending());
-        Page<Post> postPage = postRepository.findByJobTypeAndJobLocation(jobType, jobLocation, pageable);
+        Page<Post> postPage = postRepository.findByJobTypeAndJobLocationAndArchivedFalse(jobType, jobLocation, pageable);
         return postPage.map(post -> mapToDto(post, new PostDto()));
     }
 

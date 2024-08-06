@@ -55,6 +55,7 @@ public class AuthController {
 
     @GetMapping("/register")
     public String register(@ModelAttribute final RegisterDto registerDto) {
+        
         return "auth/register";
     }
 
@@ -69,5 +70,4 @@ public class AuthController {
         redirectAttributes.addFlashAttribute(WebUtils.MSG_SUCCESS, "You have registered successfully.Please login.");
         return "redirect:/login";
     }
-
 }

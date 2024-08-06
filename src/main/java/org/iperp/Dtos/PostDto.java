@@ -39,5 +39,4 @@ public class PostDto {
     private boolean archived;
 
     private List<PostSkillDto> skills = new ArrayList<>();
-
 }

@@ -36,6 +36,7 @@ public class ApplicationController {
 
     @PostMapping("/apply")
     public String applyToPost(@RequestParam Long postId, RedirectAttributes redirectAttributes) {
+
         try {
             applicationService.applyToPost(postId);
             redirectAttributes.addFlashAttribute("MSG_SUCCESS", "You have applied successfully.");
@@ -61,10 +62,8 @@ public class ApplicationController {
     }
 
     @PostMapping("/update-status")
-    public String updateApplicationStatus(@RequestParam Long applicationId,
-                                          @RequestParam Long postId,
-                                          @RequestParam ApplicationStatus status,
-                                          RedirectAttributes redirectAttributes) {
+    public String updateApplicationStatus(@RequestParam Long applicationId, @RequestParam Long postId, @RequestParam ApplicationStatus status, RedirectAttributes redirectAttributes) {
+
         try {
             applicationService.updateApplicationStatus(applicationId, status);
             redirectAttributes.addFlashAttribute("message", "Application " + status.getDisplayName().toLowerCase() + " successfully.");

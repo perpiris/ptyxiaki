@@ -4,8 +4,6 @@ import org.iperp.Dtos.UserApplicationDto;
 import org.iperp.Enums.ApplicationStatus;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
-
 public interface IApplicationService {
     Page<UserApplicationDto> findAllForApplicant(int pageNumber, int pageSize, String sortBy);
 

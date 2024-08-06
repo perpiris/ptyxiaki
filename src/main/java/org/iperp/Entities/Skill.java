@@ -25,5 +25,4 @@ public class Skill {
 
     @OneToMany(mappedBy = "skill")
     private List<PostSkill> postSkills;
-
 }
