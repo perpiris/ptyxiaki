@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
     <title>Job List</title>
@@ -76,7 +77,7 @@
                     </div>
                 </div>
 
-                <div class="card mb-3">
+                <div class="card mb-3" sec:authorize="isAuthenticated()">
                     <div class="card-body">
                         <h5 class="card-title">Skill Matching</h5>
                         <div class="form-check">
