@@ -44,7 +44,8 @@
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         th:data-bs-target="${'#collapse' + appStat.index}" aria-expanded="false"
                         th:aria-controls="${'collapse' + appStat.index}">
-                    <span th:text="${jobApplication.user.username}"></span>
+                    <span th:text="${jobApplication.user.surname + ' ' + jobApplication.user.name + ' - ' + jobApplication.user.email}">
+                    </span>
                     <span class="badge bg-primary ms-2" th:text="${jobApplication.status}"></span>
                 </button>
             </h2>

@@ -287,7 +287,9 @@ public class PostService implements IPostService {
 
         AppUserDto userDto = new AppUserDto();
         userDto.setId(application.getUser().getId());
-        userDto.setUsername(application.getUser().getUsername());
+        userDto.setEmail(application.getUser().getEmail());
+        userDto.setName(application.getUser().getName());
+        userDto.setSurname(application.getUser().getSurname());
         dto.setUser(userDto);
 
         List<UserSkillDto> userSkillDtos = application.getUser().getSkills().stream()
