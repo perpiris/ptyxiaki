@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataSource name="devjobs@localhost">
-  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.52">
+  <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
       <Grants>1||-9223372036854775808|c|G
@@ -4239,59 +4239,59 @@ false Zulu
       <OwnerName>pg_database_owner</OwnerName>
     </schema>
     <sequence id="265" parent="264" name="applications_id_seq">
-      <DasType>bigint|0s</DasType>
       <ObjectId>33646</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>1132</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="266" parent="264" name="post_skills_id_seq">
-      <DasType>bigint|0s</DasType>
       <ObjectId>33654</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>1133</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="267" parent="264" name="posts_id_seq">
-      <DasType>bigint|0s</DasType>
       <ObjectId>33661</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>1134</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="268" parent="264" name="roles_id_seq">
-      <DasType>bigint|0s</DasType>
       <ObjectId>33672</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>1135</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="269" parent="264" name="skills_id_seq">
-      <DasType>bigint|0s</DasType>
       <ObjectId>33679</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>1136</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="270" parent="264" name="user_skills_id_seq">
-      <DasType>bigint|0s</DasType>
       <ObjectId>33691</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>1138</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <sequence id="271" parent="264" name="users_id_seq">
-      <DasType>bigint|0s</DasType>
       <ObjectId>33698</ObjectId>
       <SequenceIdentity>1</SequenceIdentity>
       <StartValue>1</StartValue>
       <StateNumber>1139</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <OwnerName>postgres</OwnerName>
     </sequence>
     <table id="272" parent="264" name="applications">
@@ -4349,45 +4349,45 @@ false Zulu
       <StateNumber>1132</StateNumber>
     </check>
     <column id="281" parent="272" name="id">
-      <DasType>bigint|0s</DasType>
       <DefaultExpression>nextval(&apos;applications_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1132</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <SequenceId>33646</SequenceId>
       <TypeId>20</TypeId>
     </column>
     <column id="282" parent="272" name="created_on">
-      <DasType>timestamp(6)|0s</DasType>
       <Position>2</Position>
       <StateNumber>1132</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
       <TypeId>1114</TypeId>
     </column>
     <column id="283" parent="272" name="status">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>1132</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="284" parent="272" name="updated_on">
-      <DasType>timestamp(6)|0s</DasType>
       <Position>4</Position>
       <StateNumber>1132</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
       <TypeId>1114</TypeId>
     </column>
     <column id="285" parent="272" name="post_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StateNumber>1132</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <column id="286" parent="272" name="user_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StateNumber>1132</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <foreign-key id="287" parent="272" name="fkiaoo8q30apkdr4h6m68l2t4i5">
@@ -4421,33 +4421,33 @@ false Zulu
       <UnderlyingIndexId>33652</UnderlyingIndexId>
     </key>
     <column id="291" parent="273" name="id">
-      <DasType>bigint|0s</DasType>
       <DefaultExpression>nextval(&apos;post_skills_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1133</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <SequenceId>33654</SequenceId>
       <TypeId>20</TypeId>
     </column>
     <column id="292" parent="273" name="years">
-      <DasType>integer|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1133</StateNumber>
+      <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
     <column id="293" parent="273" name="post_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>1133</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <column id="294" parent="273" name="skill_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>1133</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <foreign-key id="295" parent="273" name="fk5w5435akuqeq2pyuph5ppk2kf">
@@ -4493,67 +4493,67 @@ false Zulu
       <StateNumber>1134</StateNumber>
     </check>
     <column id="301" parent="274" name="id">
-      <DasType>bigint|0s</DasType>
       <DefaultExpression>nextval(&apos;posts_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <SequenceId>33661</SequenceId>
       <TypeId>20</TypeId>
     </column>
     <column id="302" parent="274" name="accepting_applications">
-      <DasType>boolean|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>boolean|0s</StoredType>
       <TypeId>16</TypeId>
     </column>
     <column id="303" parent="274" name="archived">
-      <DasType>boolean|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>boolean|0s</StoredType>
       <TypeId>16</TypeId>
     </column>
     <column id="304" parent="274" name="created_on">
-      <DasType>timestamp(6)|0s</DasType>
       <Position>4</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>timestamp(6)|0s</StoredType>
       <TypeId>1114</TypeId>
     </column>
     <column id="305" parent="274" name="description">
-      <DasType>text|0s</DasType>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
     <column id="306" parent="274" name="job_location">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="307" parent="274" name="job_type">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="308" parent="274" name="title">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>8</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="309" parent="274" name="created_by">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>9</Position>
       <StateNumber>1134</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <foreign-key id="310" parent="274" name="fk4s8wtgwpo1h8p5tsy9f04ybjg">
@@ -4580,19 +4580,19 @@ false Zulu
       <UnderlyingIndexId>33670</UnderlyingIndexId>
     </key>
     <column id="313" parent="275" name="id">
-      <DasType>bigint|0s</DasType>
       <DefaultExpression>nextval(&apos;roles_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1135</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <SequenceId>33672</SequenceId>
       <TypeId>20</TypeId>
     </column>
     <column id="314" parent="275" name="authority">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1135</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <index id="315" parent="275" name="roles_pkey">
@@ -4612,19 +4612,19 @@ false Zulu
       <UnderlyingIndexId>33677</UnderlyingIndexId>
     </key>
     <column id="317" parent="276" name="id">
-      <DasType>bigint|0s</DasType>
       <DefaultExpression>nextval(&apos;skills_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1136</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <SequenceId>33679</SequenceId>
       <TypeId>20</TypeId>
     </column>
     <column id="318" parent="276" name="description">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1136</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <index id="319" parent="276" name="skills_pkey">
@@ -4644,17 +4644,17 @@ false Zulu
       <UnderlyingIndexId>33684</UnderlyingIndexId>
     </key>
     <column id="321" parent="277" name="user_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1137</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <column id="322" parent="277" name="role_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1137</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <foreign-key id="323" parent="277" name="fkhfh9dx7w3ubf1co1vdev94g3f">
@@ -4689,33 +4689,33 @@ role_id</ColNames>
       <UnderlyingIndexId>33689</UnderlyingIndexId>
     </key>
     <column id="327" parent="278" name="id">
-      <DasType>bigint|0s</DasType>
       <DefaultExpression>nextval(&apos;user_skills_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1138</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <SequenceId>33691</SequenceId>
       <TypeId>20</TypeId>
     </column>
     <column id="328" parent="278" name="years">
-      <DasType>integer|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1138</StateNumber>
+      <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
     <column id="329" parent="278" name="skill_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>1138</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <column id="330" parent="278" name="user_id">
-      <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>1138</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <TypeId>20</TypeId>
     </column>
     <foreign-key id="331" parent="278" name="fkh223y61gwijpgqt6nlsuti07g">
@@ -4749,33 +4749,33 @@ role_id</ColNames>
       <UnderlyingIndexId>33696</UnderlyingIndexId>
     </key>
     <column id="335" parent="279" name="id">
-      <DasType>bigint|0s</DasType>
       <DefaultExpression>nextval(&apos;users_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>1139</StateNumber>
+      <StoredType>bigint|0s</StoredType>
       <SequenceId>33698</SequenceId>
       <TypeId>20</TypeId>
     </column>
     <column id="336" parent="279" name="email">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>1139</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="337" parent="279" name="hash">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>1139</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="338" parent="279" name="username">
-      <DasType>varchar(255)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StateNumber>1139</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <index id="339" parent="279" name="users_pkey">
