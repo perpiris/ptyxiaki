@@ -57,7 +57,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="skillDescription" class="form-label">Skill</label>
-                            <input type="text" class="form-control" id="skillDescription" name="skillDescription"
+                            <input type="text" class="form-control" id="skillDescription" oninput="this.value = this.value.toUpperCase()" name="skillDescription"
                                    required>
                         </div>
                         <div class="mb-3">
@@ -74,7 +74,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="modal" id="editSkillModal" tabindex="-1" aria-labelledby="editSkillModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -85,6 +85,10 @@
                 <form th:action="@{/skills/edit}" method="post">
                     <div class="modal-body">
                         <input type="hidden" id="editUserSkillId" name="userSkillId">
+                        <div class="mb-3">
+                            <label for="editSkillDescription" class="form-label">Skill</label>
+                            <input type="text" class="form-control" id="editSkillDescription" readonly>
+                        </div>
                         <div class="mb-3">
                             <label for="editYears" class="form-label">Years of Experience</label>
                             <input type="number" class="form-control" id="editYears" name="years" min="0" max="50" required>
@@ -131,9 +135,11 @@
                 button.addEventListener('click', function() {
                     const skillId = this.getAttribute('data-skill-id');
                     const skillYears = this.getAttribute('data-skill-years');
+                    const skillDescription = this.closest('tr').querySelector('td:first-child').textContent;
 
                     document.getElementById('editUserSkillId').value = skillId;
                     document.getElementById('editYears').value = skillYears;
+                    document.getElementById('editSkillDescription').value = skillDescription;
 
                     editModal.show();
                 });

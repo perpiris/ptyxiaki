@@ -48,7 +48,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="skillDescription" class="form-label">Skill Description</label>
-                        <input type="text" class="form-control" id="skillDescription" required>
+                        <input type="text" class="form-control" id="skillDescription" oninput="this.value = this.value.toUpperCase()" required>
                     </div>
                     <div class="mb-3">
                         <label for="skillYears" class="form-label">Years of Experience</label>
@@ -63,13 +63,42 @@
         </div>
     </div>
 
+    <div class="modal" id="editRequirementModal" tabindex="-1" aria-labelledby="editRequirementModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editRequirementModalLabel">Edit Requirement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editSkillDescription" class="form-label">Skill Description</label>
+                        <input type="text" class="form-control" id="editSkillDescription" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSkillYears" class="form-label">Years of Experience</label>
+                        <input type="number" class="form-control" id="editSkillYears" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditRequirement">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function () {
             const requirementsList = document.getElementById('requirementsList');
             const addRequirementModal = new bootstrap.Modal(document.getElementById('addRequirementModal'));
+            const editRequirementModal = new bootstrap.Modal(document.getElementById('editRequirementModal'));
             const saveRequirementBtn = document.getElementById('saveRequirement');
+            const saveEditRequirementBtn = document.getElementById('saveEditRequirement');
             let skillIndex = 0;
-            
+            let currentEditingLi = null;
+
             const existingSkills = /*[[${skills}]]*/ [];
             existingSkills.forEach(skill => {
                 addRequirementToList(skill.description, skill.years);
@@ -87,6 +116,16 @@
                 }
             });
 
+            saveEditRequirementBtn.addEventListener('click', function () {
+                const description = document.getElementById('editSkillDescription').value.trim();
+                const years = document.getElementById('editSkillYears').value.trim();
+
+                if (description && years && currentEditingLi) {
+                    updateRequirementInList(currentEditingLi, description, years);
+                    editRequirementModal.hide();
+                }
+            });
+
             function addRequirementToList(description, years) {
                 const li = document.createElement('li');
                 li.className = 'list-group-item d-flex justify-content-between align-items-center';
@@ -94,16 +133,41 @@
                     ${description} - ${years} year(s)
                     <input type="hidden" name="skills[${skillIndex}].description" value="${description}">
                     <input type="hidden" name="skills[${skillIndex}].years" value="${years}">
-                    <button type="button" class="btn btn-danger btn-sm remove-skill">Remove</button>
+                    <div>
+                        <button type="button" class="btn btn-primary btn-sm edit-skill">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm remove-skill">Remove</button>
+                    </div>
                 `;
                 requirementsList.appendChild(li);
                 skillIndex++;
+            }
+
+            function updateRequirementInList(li, description, years) {
+                li.innerHTML = `
+                    ${description} - ${years} year(s)
+                    <input type="hidden" name="skills[${skillIndex}].description" value="${description}">
+                    <input type="hidden" name="skills[${skillIndex}].years" value="${years}">
+                    <div>
+                        <button type="button" class="btn btn-primary btn-sm edit-skill">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm remove-skill">Remove</button>
+                    </div>
+                `;
+                updateSkillIndexes();
             }
 
             requirementsList.addEventListener('click', function (e) {
                 if (e.target.classList.contains('remove-skill')) {
                     e.target.closest('li').remove();
                     updateSkillIndexes();
+                } else if (e.target.classList.contains('edit-skill')) {
+                    const li = e.target.closest('li');
+                    const description = li.querySelector('input[name$="].description"]').value;
+                    const years = li.querySelector('input[name$="].years"]').value;
+
+                    document.getElementById('editSkillDescription').value = description;
+                    document.getElementById('editSkillYears').value = years;
+                    currentEditingLi = li;
+                    editRequirementModal.show();
                 }
             });
 

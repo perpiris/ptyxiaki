@@ -115,7 +115,7 @@
                         </div>
                         <div class="mb-3">
                             <span th:each="skill : ${post.skills}"
-                                  th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')},
+                                  th:with="isAuthenticated=${#authorization.expression('isAuthenticated() && hasAuthority(''DEVELOPER'')')},
                                            userSkillYears=${isAuthenticated ? userSkills.getOrDefault(skill.id, 0) : 0}"
                                   th:class="${'skill-chip ' +
                                              (isAuthenticated
